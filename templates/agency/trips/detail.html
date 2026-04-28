@@ -1,0 +1,138 @@
+{% extends 'agency/base_agency.html' %}
+{% block title %}Trip Detail — TMS{% endblock %}
+{% block page_title %}Trip Detail{% endblock %}
+{% block page_subtitle %}{{ trip.route }} · {{ trip.departure_datetime|date:"d M Y" }}{% endblock %}
+
+{% block content %}
+
+<!-- Trip Stats Card -->
+<div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden mb-5 fade-up">
+  <!-- Header gradient -->
+  <div class="bg-gradient-to-r from-blue-800 to-blue-900 text-white px-6 py-5">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div class="flex items-center gap-4">
+        <div class="text-center">
+          <p class="text-3xl font-black tabular-nums">{{ trip.departure_datetime|date:"H:i" }}</p>
+          <p class="text-blue-300 text-sm mt-0.5 font-semibold">{{ trip.route.origin.name }}</p>
+        </div>
+        <div class="flex flex-col items-center gap-1 px-3">
+          <p class="text-xs text-blue-400">{{ trip.route.duration_display }}</p>
+          <svg class="w-6 h-6 text-orange-400" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
+          </svg>
+        </div>
+        <div class="text-center">
+          <p class="text-3xl font-black tabular-nums">{{ trip.arrival_datetime|date:"H:i" }}</p>
+          <p class="text-blue-300 text-sm mt-0.5 font-semibold">{{ trip.route.destination.name }}</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="badge {% if trip.status == 'scheduled' %}badge-blue{% elif trip.status == 'arrived' %}badge-green{% elif trip.status == 'cancelled' %}badge-red{% else %}badge-yellow{% endif %}">
+          {{ trip.get_status_display }}
+        </span>
+        <a href="{% url 'agency:trip_edit' trip.id %}"
+          class="inline-flex items-center gap-1 bg-white/10 hover:bg-white/20 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-colors">
+          Edit
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Details Grid -->
+  <div class="p-5 grid grid-cols-2 sm:grid-cols-4 gap-4">
+    <div class="bg-slate-50 rounded-xl p-3.5">
+      <p class="text-xs text-slate-400 font-medium mb-1">Bus</p>
+      <p class="font-bold text-slate-800 text-sm">{{ trip.bus.registration_number }}</p>
+      <p class="text-xs text-slate-400">{{ trip.bus.bus_type }}</p>
+    </div>
+    <div class="bg-slate-50 rounded-xl p-3.5">
+      <p class="text-xs text-slate-400 font-medium mb-1">Driver</p>
+      <p class="font-bold text-slate-800 text-sm">{{ trip.driver.full_name }}</p>
+    </div>
+    <div class="bg-slate-50 rounded-xl p-3.5">
+      <p class="text-xs text-slate-400 font-medium mb-1">Ticket Price</p>
+      <p class="font-bold text-blue-700 text-sm">PKR {{ trip.base_price|floatformat:0 }}</p>
+    </div>
+    <div class="bg-slate-50 rounded-xl p-3.5">
+      <p class="text-xs text-slate-400 font-medium mb-1">Seat Availability</p>
+      <p class="font-bold text-emerald-600 text-sm">{{ trip.available_seats_count }} / {{ trip.total_seats_count }}</p>
+      <div class="w-full h-1.5 bg-slate-200 rounded-full mt-1.5 overflow-hidden">
+        <div class="h-full rounded-full {% if trip.available_seats_count < 5 %}bg-red-400{% elif trip.occupancy_percent > 70 %}bg-amber-400{% else %}bg-emerald-400{% endif %}"
+          style="width: {{ trip.occupancy_percent }}%"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Passenger Manifest -->
+<div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden fade-up-2">
+  <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+    <div class="flex items-center gap-2">
+      <div class="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center">
+        <svg class="w-3.5 h-3.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+        </svg>
+      </div>
+      <h3 class="font-semibold text-slate-800 text-sm">Passenger Manifest</h3>
+    </div>
+    <span class="badge badge-blue">{{ bookings|length }} booking{{ bookings|length|pluralize }}</span>
+  </div>
+  <div class="overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="border-b border-slate-50 bg-slate-50/60">
+          <th class="text-left px-5 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wide">Booking #</th>
+          <th class="text-left px-5 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wide">Passenger</th>
+          <th class="text-left px-5 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wide hidden md:table-cell">Phone</th>
+          <th class="text-left px-5 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wide">Seats</th>
+          <th class="text-left px-5 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wide">Amount</th>
+          <th class="text-left px-5 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wide">Status</th>
+          <th class="text-left px-5 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wide hidden lg:table-cell">Booked At</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-50">
+        {% for booking in bookings %}
+        <tr class="hover:bg-slate-50/70 transition-colors">
+          <td class="px-5 py-3.5">
+            <span class="font-mono text-xs font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md">{{ booking.booking_number }}</span>
+          </td>
+          <td class="px-5 py-3.5">
+            <div class="flex items-center gap-2">
+              <div class="w-7 h-7 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 text-xs font-bold shrink-0">
+                {{ booking.passenger.full_name|slice:":1"|upper }}
+              </div>
+              <div>
+                <p class="font-semibold text-slate-800 text-sm">{{ booking.passenger.full_name }}</p>
+                <p class="text-xs text-slate-400">{{ booking.passenger.email }}</p>
+              </div>
+            </div>
+          </td>
+          <td class="px-5 py-3.5 text-slate-500 text-xs hidden md:table-cell">{{ booking.passenger.phone_number|default:"—" }}</td>
+          <td class="px-5 py-3.5">
+            <div class="flex flex-wrap gap-1">
+              {% for seat in booking.seats.all %}
+              <span class="bg-blue-100 text-blue-700 text-xs font-bold px-2 py-0.5 rounded-md">{{ seat.seat_number }}</span>
+              {% endfor %}
+            </div>
+          </td>
+          <td class="px-5 py-3.5 font-bold text-slate-700 tabular-nums">PKR {{ booking.total_price|floatformat:0 }}</td>
+          <td class="px-5 py-3.5">
+            <span class="badge {% if booking.status == 'confirmed' %}badge-green{% elif booking.status == 'pending' %}badge-yellow{% else %}badge-red{% endif %}">
+              {{ booking.get_status_display }}
+            </span>
+          </td>
+          <td class="px-5 py-3.5 text-slate-400 text-xs hidden lg:table-cell">{{ booking.booked_at|date:"d M Y H:i" }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7" class="px-5 py-12 text-center">
+            <p class="text-slate-400 font-medium text-sm">No bookings for this trip yet.</p>
+            <p class="text-slate-300 text-xs mt-1">Passengers will appear here once they book.</p>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

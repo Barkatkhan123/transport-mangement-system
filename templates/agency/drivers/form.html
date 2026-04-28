@@ -1,0 +1,91 @@
+{% extends 'agency/base_agency.html' %}
+{% block title %}{{ title }} — TMS{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+{% block page_subtitle %}{% if driver %}Update driver details{% else %}Register a new driver{% endif %}{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl">
+  <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden fade-up">
+    <div class="px-6 py-4 border-b border-slate-100">
+      <h2 class="font-bold text-slate-800">Driver Information</h2>
+      <p class="text-xs text-slate-400 mt-0.5">Fields marked * are required</p>
+    </div>
+    <div class="p-6">
+      <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Full Name *</label>
+            {{ form.full_name }}
+            {% if form.full_name.errors %}<p class="text-red-500 text-xs mt-1.5">{{ form.full_name.errors.0 }}</p>{% endif %}
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">License Number *</label>
+            {{ form.license_number }}
+            {% if form.license_number.errors %}<p class="text-red-500 text-xs mt-1.5">{{ form.license_number.errors.0 }}</p>{% endif %}
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">License Expiry Date *</label>
+            {{ form.license_expiry_date }}
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Phone Number *</label>
+            {{ form.phone_number }}
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Date of Birth</label>
+            {{ form.date_of_birth }}
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Experience (Years)</label>
+            {{ form.experience_years }}
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Status</label>
+            {{ form.status }}
+          </div>
+
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Address</label>
+            {{ form.address }}
+          </div>
+
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Driver Photo</label>
+            <div class="border-2 border-dashed border-slate-200 rounded-xl p-4 text-center hover:border-blue-300 transition-colors">
+              {{ form.photo }}
+              <p class="text-xs text-slate-400 mt-1.5">Optional. PNG, JPG up to 2MB</p>
+            </div>
+          </div>
+
+        </div>
+
+        {% if form.non_field_errors %}
+        <div class="flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-xl mt-4">
+          <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/></svg>
+          {{ form.non_field_errors.0 }}
+        </div>
+        {% endif %}
+
+        <div class="flex gap-3 mt-6 pt-5 border-t border-slate-100">
+          <button type="submit"
+            class="bg-blue-700 hover:bg-blue-800 text-white px-7 py-2.5 rounded-xl font-bold text-sm transition-colors shadow-sm shadow-blue-200">
+            {% if driver %}Update Driver{% else %}Add Driver{% endif %}
+          </button>
+          <a href="{% url 'agency:drivers' %}"
+            class="border-2 border-slate-200 text-slate-700 px-7 py-2.5 rounded-xl font-semibold text-sm hover:bg-slate-50 hover:border-slate-300 transition-all">
+            Cancel
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

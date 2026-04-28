@@ -1,0 +1,276 @@
+{% extends 'base.html' %}
+{% block title %}Select Seats — {{ trip.route }} | TMS{% endblock %}
+
+{% block content %}
+<!-- Trip Header Bar -->
+<div class="bg-gradient-to-r from-blue-800 to-blue-900 text-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+
+    <!-- Route timeline (always visible) -->
+    <div class="flex items-center justify-center gap-4 sm:gap-6 mb-4">
+      <div class="text-center">
+        <p class="text-2xl sm:text-3xl font-black tabular-nums">{{ trip.departure_datetime|date:"H:i" }}</p>
+        <p class="text-xs sm:text-sm font-semibold text-blue-200 truncate max-w-[90px] sm:max-w-none">{{ trip.route.origin.name }}</p>
+      </div>
+      <div class="flex flex-col items-center gap-1 px-2 sm:px-3 flex-1 max-w-[140px]">
+        <p class="text-xs text-blue-300">{{ trip.route.duration_display }}</p>
+        <div class="flex items-center gap-1 w-full">
+          <div class="flex-1 h-px bg-blue-400"></div>
+          <i class="fa-solid fa-bus text-orange-400 text-sm flex-shrink-0"></i>
+          <div class="flex-1 h-px bg-blue-400"></div>
+        </div>
+      </div>
+      <div class="text-center">
+        <p class="text-2xl sm:text-3xl font-black tabular-nums">{{ trip.arrival_datetime|date:"H:i" }}</p>
+        <p class="text-xs sm:text-sm font-semibold text-blue-200 truncate max-w-[90px] sm:max-w-none">{{ trip.route.destination.name }}</p>
+      </div>
+    </div>
+
+    <!-- Meta info row -->
+    <div class="flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 text-xs sm:text-sm">
+      <div class="flex items-center gap-1.5">
+        <i class="fa-regular fa-calendar text-blue-300 text-xs"></i>
+        <span class="text-blue-200">{{ trip.departure_datetime|date:"d M Y" }}</span>
+      </div>
+      <span class="text-blue-600">·</span>
+      <div class="flex items-center gap-1.5">
+        <i class="fa-solid fa-building text-blue-300 text-xs"></i>
+        <span class="font-semibold">{{ trip.agency.name }}</span>
+      </div>
+      <span class="text-blue-600">·</span>
+      <div class="flex items-center gap-1.5">
+        <i class="fa-solid fa-bus text-blue-300 text-xs"></i>
+        <span>{{ trip.bus.bus_type }}</span>
+      </div>
+      <span class="text-blue-600">·</span>
+      <div class="flex items-center gap-1.5">
+        <span class="text-blue-300 text-xs">PKR</span>
+        <span class="text-lg sm:text-2xl font-black text-orange-400 tabular-nums">{{ trip.base_price|floatformat:0 }}</span>
+        <span class="text-blue-300 text-xs">/ seat</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+    <!-- ═══ SEAT MAP ═══ -->
+    <div class="lg:col-span-2">
+      <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm overflow-hidden">
+        <!-- Header -->
+        <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+          <div>
+            <h2 class="font-bold text-slate-800">Choose Your Seat</h2>
+            <p class="text-xs text-slate-400 mt-0.5">{{ trip.available_seats_count }} of {{ trip.total_seats_count }} seats available</p>
+          </div>
+          <div class="hidden sm:flex items-center gap-3 text-xs font-medium text-slate-500">
+            <div class="flex items-center gap-1.5"><div class="w-6 h-6 rounded-lg bg-slate-100 border-2 border-slate-200"></div>Available</div>
+            <div class="flex items-center gap-1.5"><div class="w-6 h-6 rounded-lg bg-blue-600"></div>Selected</div>
+            <div class="flex items-center gap-1.5"><div class="w-6 h-6 rounded-lg bg-red-100 border-2 border-red-200"></div>Booked</div>
+          </div>
+        </div>
+
+        <div class="p-6">
+          <!-- Bus outline -->
+          <div class="max-w-xs mx-auto">
+            <!-- Driver cab -->
+            <div class="flex justify-center mb-6">
+              <div class="flex items-center gap-3 bg-slate-800 text-white text-xs font-bold px-5 py-2 rounded-t-full rounded-b-lg shadow-md">
+                <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><circle cx="10" cy="10" r="3"/><path fill-rule="evenodd" d="M10 2a8 8 0 100 16A8 8 0 0010 2z" clip-rule="evenodd" opacity=".2"/></svg>
+                Driver · Front of Bus
+              </div>
+            </div>
+
+            <!-- Seat Form -->
+            <form id="seat-form" action="{% url 'booking_confirm' trip.id %}" method="POST">
+              {% csrf_token %}
+              <div id="hidden-inputs"></div>
+
+              <div class="bg-slate-50 rounded-2xl border-2 border-slate-200 p-4 space-y-2">
+                {% for row_num, row_seats in seat_rows.items %}
+                <div class="flex items-center gap-2">
+                  <span class="text-xs text-slate-400 w-5 text-center font-mono tabular-nums">{{ row_num }}</span>
+                  {% for seat in row_seats %}
+                    {% if forloop.counter == 3 %}
+                    <div class="flex-1"></div>
+                    {% endif %}
+                    <button type="button"
+                      data-id="{{ seat.id }}"
+                      data-num="{{ seat.seat_number }}"
+                      {% if seat.is_booked %}disabled{% endif %}
+                      class="seat w-10 h-10 rounded-xl text-xs font-bold flex items-center justify-center border-2 transition-all
+                        {% if seat.is_booked %}booked bg-red-50 text-red-300 border-red-200 cursor-not-allowed
+                        {% else %}bg-white text-slate-600 border-slate-200 hover:border-blue-400 hover:bg-blue-50 hover:text-blue-700 cursor-pointer{% endif %}">
+                      {{ seat.seat_number }}
+                    </button>
+                  {% endfor %}
+                </div>
+                {% endfor %}
+              </div>
+            </form>
+
+            <!-- Door indicator -->
+            <div class="flex justify-center mt-4">
+              <div class="text-xs font-medium text-slate-400 border border-dashed border-slate-300 px-4 py-1.5 rounded-full">
+                🚪 Exit / Door
+              </div>
+            </div>
+          </div>
+
+          <!-- Legend (mobile) -->
+          <div class="flex sm:hidden items-center justify-center gap-4 mt-4 text-xs font-medium text-slate-500">
+            <div class="flex items-center gap-1.5"><div class="w-5 h-5 rounded-lg bg-slate-100 border-2 border-slate-200"></div>Available</div>
+            <div class="flex items-center gap-1.5"><div class="w-5 h-5 rounded-lg bg-blue-600"></div>Selected</div>
+            <div class="flex items-center gap-1.5"><div class="w-5 h-5 rounded-lg bg-red-100 border-2 border-red-200"></div>Booked</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ BOOKING SUMMARY ═══ -->
+    <div class="lg:col-span-1">
+      <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm lg:sticky lg:top-20">
+        <!-- Header -->
+        <div class="px-5 py-4 border-b border-slate-100">
+          <h3 class="font-bold text-slate-800">Booking Summary</h3>
+        </div>
+
+        <!-- Trip Details -->
+        <div class="px-5 py-4 space-y-3 border-b border-slate-100 text-sm">
+          <div class="flex justify-between">
+            <span class="text-slate-400 font-medium">Route</span>
+            <span class="font-semibold text-slate-700 text-right">{{ trip.route.origin.name }} → {{ trip.route.destination.name }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400 font-medium">Date</span>
+            <span class="font-semibold text-slate-700">{{ trip.departure_datetime|date:"d M Y" }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400 font-medium">Departure</span>
+            <span class="font-semibold text-slate-700">{{ trip.departure_datetime|date:"H:i" }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400 font-medium">Bus</span>
+            <span class="font-semibold text-slate-700">{{ trip.bus.registration_number }}</span>
+          </div>
+        </div>
+
+        <!-- Selected Seats -->
+        <div class="px-5 py-4 border-b border-slate-100">
+          <p class="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">Selected Seats</p>
+          <div id="seats-display" class="flex flex-wrap gap-1.5 min-h-8">
+            <span class="text-xs text-slate-400 italic">No seats selected</span>
+          </div>
+        </div>
+
+        <!-- Price -->
+        <div class="px-5 py-4 border-b border-slate-100">
+          <div class="flex justify-between items-center mb-1">
+            <span class="text-xs text-slate-400 font-medium" id="price-label">0 seat(s) × PKR {{ trip.base_price|floatformat:0 }}</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="font-bold text-slate-700">Total</span>
+            <span id="total-price" class="text-2xl font-black text-blue-700 tabular-nums">PKR 0</span>
+          </div>
+        </div>
+
+        <!-- CTA -->
+        <div class="px-5 py-4">
+          {% if user.is_authenticated %}
+          <button id="confirm-btn" onclick="submitBooking()" disabled
+            class="w-full bg-orange-500 disabled:bg-slate-200 disabled:text-slate-400 hover:bg-orange-600 text-white py-3.5 rounded-xl font-bold text-sm transition-all disabled:cursor-not-allowed shadow-sm shadow-orange-100 hover:shadow-orange-200">
+            Confirm & Pay →
+          </button>
+          <p id="seat-hint" class="text-xs text-center text-slate-400 mt-2">Select up to {{ passengers }} seat{{ passengers|pluralize }}</p>
+          {% else %}
+          <a href="{% url 'login' %}?next={{ request.path }}"
+            class="block w-full bg-blue-700 text-white py-3.5 rounded-xl font-bold text-sm text-center hover:bg-blue-800 transition-colors">
+            Login to Book
+          </a>
+          <p class="text-xs text-center text-slate-400 mt-2">Sign in to continue booking</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  const BASE = {{ trip.base_price }};
+  const MAX  = {{ passengers }};
+  let selected = [];
+
+  document.querySelectorAll('.seat:not(.booked)').forEach(btn => {
+    btn.addEventListener('click', () => toggle(btn));
+  });
+
+  function toggle(btn) {
+    const id = btn.dataset.id, num = btn.dataset.num;
+    const idx = selected.findIndex(s => s.id === id);
+    if (idx > -1) {
+      selected.splice(idx, 1);
+      btn.classList.remove('bg-blue-600','border-blue-600','text-white','shadow-md','shadow-blue-200');
+      btn.classList.add('bg-white','text-slate-600','border-slate-200');
+    } else {
+      if (selected.length >= MAX) {
+        showHint(`Max ${MAX} seat${MAX > 1 ? 's' : ''} allowed.`);
+        return;
+      }
+      selected.push({ id, num });
+      btn.classList.add('bg-blue-600','border-blue-600','text-white','shadow-md','shadow-blue-200');
+      btn.classList.remove('bg-white','text-slate-600','border-slate-200');
+    }
+    refresh();
+  }
+
+  function refresh() {
+    const disp  = document.getElementById('seats-display');
+    const total = document.getElementById('total-price');
+    const label = document.getElementById('price-label');
+    const hint  = document.getElementById('seat-hint');
+    const btn   = document.getElementById('confirm-btn');
+    const inp   = document.getElementById('hidden-inputs');
+
+    inp.innerHTML = '';
+    disp.innerHTML = '';
+
+    if (!selected.length) {
+      disp.innerHTML = '<span class="text-xs text-slate-400 italic">No seats selected</span>';
+      total.textContent = 'PKR 0';
+      label.textContent = `0 seat(s) × PKR ${Math.round(BASE).toLocaleString()}`;
+      if (btn) btn.disabled = true;
+      return;
+    }
+
+    selected.forEach(s => {
+      disp.innerHTML += `<span class="inline-flex items-center bg-blue-100 text-blue-700 text-xs font-bold px-2.5 py-1 rounded-lg">${s.num}</span>`;
+      inp.innerHTML  += `<input type="hidden" name="seats" value="${s.id}">`;
+    });
+
+    const t = BASE * selected.length;
+    total.textContent = `PKR ${t.toLocaleString('en-PK', {minimumFractionDigits: 0})}`;
+    label.textContent = `${selected.length} seat(s) × PKR ${Math.round(BASE).toLocaleString()}`;
+    if (hint) hint.textContent = `${selected.length}/${MAX} seat${MAX > 1 ? 's' : ''} selected`;
+    if (btn) btn.disabled = false;
+  }
+
+  function showHint(msg) {
+    const h = document.getElementById('seat-hint');
+    if (!h) return;
+    const old = h.textContent;
+    h.textContent = msg;
+    h.classList.add('text-red-500', '!text-red-500');
+    setTimeout(() => { h.textContent = old; h.classList.remove('text-red-500', '!text-red-500'); }, 2000);
+  }
+
+  function submitBooking() {
+    if (!selected.length) return;
+    document.getElementById('seat-form').submit();
+  }
+</script>
+{% endblock %}

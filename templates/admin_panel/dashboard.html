@@ -1,0 +1,160 @@
+{% extends 'agency/base_agency.html' %}
+{% block title %}Admin Dashboard — TMS{% endblock %}
+{% block page_title %}Admin Dashboard{% endblock %}
+{% block page_subtitle %}Platform-wide overview and controls{% endblock %}
+
+{% block content %}
+
+<!-- Stats Grid -->
+<div class="grid grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
+
+  <div class="fade-up bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:shadow-md transition-shadow overflow-hidden relative">
+    <div class="absolute top-0 left-0 w-1 h-full bg-blue-500 rounded-l-2xl"></div>
+    <div class="flex items-start justify-between mb-3">
+      <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
+        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      </div>
+      <span class="badge badge-blue">Users</span>
+    </div>
+    <p class="text-3xl font-extrabold text-slate-800 tabular-nums">{{ stats.total_users }}</p>
+    <p class="text-xs text-slate-400 mt-1 font-medium">Registered passengers</p>
+  </div>
+
+  <div class="fade-up-2 bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:shadow-md transition-shadow overflow-hidden relative">
+    <div class="absolute top-0 left-0 w-1 h-full bg-violet-500 rounded-l-2xl"></div>
+    <div class="flex items-start justify-between mb-3">
+      <div class="w-10 h-10 rounded-xl bg-violet-50 flex items-center justify-center">
+        <svg class="w-5 h-5 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+      </div>
+      <span class="badge badge-purple">Agencies</span>
+    </div>
+    <p class="text-3xl font-extrabold text-slate-800 tabular-nums">{{ stats.total_agencies }}</p>
+    {% if stats.pending_agencies %}
+    <p class="text-xs text-amber-600 mt-1 font-semibold">{{ stats.pending_agencies }} awaiting approval</p>
+    {% else %}
+    <p class="text-xs text-slate-400 mt-1 font-medium">Approved agencies</p>
+    {% endif %}
+  </div>
+
+  <div class="fade-up-3 bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:shadow-md transition-shadow overflow-hidden relative">
+    <div class="absolute top-0 left-0 w-1 h-full bg-emerald-500 rounded-l-2xl"></div>
+    <div class="flex items-start justify-between mb-3">
+      <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
+        <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+      </div>
+      <span class="badge badge-green">Bookings</span>
+    </div>
+    <p class="text-3xl font-extrabold text-slate-800 tabular-nums">{{ stats.total_bookings }}</p>
+    <p class="text-xs text-emerald-600 mt-1 font-semibold">+{{ stats.today_bookings }} today</p>
+  </div>
+
+  <div class="fade-up-4 bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:shadow-md transition-shadow overflow-hidden relative">
+    <div class="absolute top-0 left-0 w-1 h-full bg-orange-500 rounded-l-2xl"></div>
+    <div class="flex items-start justify-between mb-3">
+      <div class="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center">
+        <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      </div>
+      <span class="badge badge-yellow">Revenue</span>
+    </div>
+    <p class="text-2xl font-extrabold text-slate-800 tabular-nums">PKR {{ stats.total_revenue|floatformat:0 }}</p>
+    <p class="text-xs text-slate-400 mt-1 font-medium">Platform total</p>
+  </div>
+
+</div>
+
+<!-- Panels -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+
+  <!-- Pending Agencies -->
+  <div class="bg-white rounded-2xl border border-slate-100 shadow-sm fade-up overflow-hidden">
+    <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+      <div class="flex items-center gap-2">
+        <div class="w-7 h-7 rounded-lg bg-amber-50 flex items-center justify-center">
+          <svg class="w-3.5 h-3.5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </div>
+        <h3 class="font-semibold text-slate-800 text-sm">Pending Approvals</h3>
+        {% if stats.pending_agencies %}
+        <span class="badge badge-yellow">{{ stats.pending_agencies }}</span>
+        {% endif %}
+      </div>
+      <a href="{% url 'dashboard:agencies' %}" class="text-xs font-semibold text-blue-600 hover:text-blue-800 transition-colors">View all →</a>
+    </div>
+    <div class="divide-y divide-slate-50">
+      {% for agency in pending_agencies %}
+      <div class="px-5 py-4 flex items-center gap-4">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-50 to-violet-100 flex items-center justify-center font-extrabold text-violet-700 text-sm shrink-0">
+          {{ agency.name|slice:":2"|upper }}
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="font-semibold text-slate-800 text-sm truncate">{{ agency.name }}</p>
+          <p class="text-xs text-slate-400 truncate">{{ agency.manager.email }} · {{ agency.city }}</p>
+        </div>
+        <div class="flex gap-1.5 shrink-0">
+          <form action="{% url 'dashboard:approve_agency' agency.id %}" method="POST">
+            {% csrf_token %}
+            <button name="action" value="approve"
+              class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-1.5 rounded-lg font-bold transition-colors">
+              Approve
+            </button>
+          </form>
+          <form action="{% url 'dashboard:approve_agency' agency.id %}" method="POST">
+            {% csrf_token %}
+            <button name="action" value="suspend"
+              class="border border-red-200 text-red-500 text-xs px-3 py-1.5 rounded-lg font-bold hover:bg-red-50 transition-colors">
+              Reject
+            </button>
+          </form>
+        </div>
+      </div>
+      {% empty %}
+      <div class="px-5 py-10 text-center">
+        <svg class="w-10 h-10 text-slate-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <p class="text-sm text-slate-400">All caught up! No pending approvals.</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Recent Bookings -->
+  <div class="bg-white rounded-2xl border border-slate-100 shadow-sm fade-up-2 overflow-hidden">
+    <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+      <div class="flex items-center gap-2">
+        <div class="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center">
+          <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+          </svg>
+        </div>
+        <h3 class="font-semibold text-slate-800 text-sm">Recent Bookings</h3>
+      </div>
+    </div>
+    <div class="divide-y divide-slate-50">
+      {% for booking in recent_bookings %}
+      <div class="px-5 py-3.5 hover:bg-slate-50/70 transition-colors flex items-center gap-4">
+        <div class="w-9 h-9 rounded-full bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center font-bold text-slate-600 text-xs shrink-0">
+          {{ booking.passenger.full_name|slice:":1"|upper }}
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="font-semibold text-slate-700 text-sm truncate">{{ booking.passenger.full_name }}</p>
+          <p class="text-xs text-slate-400 truncate mt-0.5">
+            <span class="font-mono">{{ booking.booking_number }}</span> · {{ booking.trip.route }}
+          </p>
+        </div>
+        <div class="text-right shrink-0">
+          <p class="text-sm font-bold text-slate-700 tabular-nums">PKR {{ booking.total_price|floatformat:0 }}</p>
+          <p class="text-xs text-slate-400">{{ booking.booked_at|date:"d M" }}</p>
+        </div>
+      </div>
+      {% empty %}
+      <div class="px-5 py-10 text-center">
+        <p class="text-sm text-slate-400">No bookings yet across the platform.</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+</div>
+{% endblock %}

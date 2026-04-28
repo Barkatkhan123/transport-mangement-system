@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% block title %}My Profile — TMS{% endblock %}
+
+{% block content %}
+<!-- Header Bar -->
+<div class="bg-gradient-to-r from-blue-800 to-blue-900 text-white">
+  <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="flex items-center gap-5">
+      <div class="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center font-extrabold text-white text-2xl shadow-lg">
+        {{ user.get_initials }}
+      </div>
+      <div>
+        <h1 class="text-xl font-extrabold">{{ user.full_name }}</h1>
+        <p class="text-blue-300 text-sm">{{ user.email }}</p>
+        <span class="inline-block mt-1.5 badge badge-blue text-xs">{{ user.get_role_display }}</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+  <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden fade-up">
+    <div class="px-6 py-4 border-b border-slate-100">
+      <h2 class="font-bold text-slate-800">Edit Profile</h2>
+      <p class="text-xs text-slate-400 mt-0.5">Update your personal information</p>
+    </div>
+    <div class="p-6">
+      <form method="POST" enctype="multipart/form-data" class="space-y-5">
+        {% csrf_token %}
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Full Name</label>
+          {{ user_form.full_name }}
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Phone Number</label>
+          {{ user_form.phone_number }}
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Profile Photo</label>
+          <div class="border-2 border-dashed border-slate-200 rounded-xl p-4 text-center hover:border-blue-300 transition-colors">
+            {{ user_form.profile_photo }}
+            <p class="text-xs text-slate-400 mt-1.5">Optional. PNG, JPG up to 2MB</p>
+          </div>
+        </div>
+
+        {% if profile_form %}
+        <div class="border-t border-slate-100 pt-5">
+          <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-4">Additional Details</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Gender</label>
+              {{ profile_form.gender }}
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Date of Birth</label>
+              {{ profile_form.date_of_birth }}
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">CNIC / Passport</label>
+              {{ profile_form.national_id }}
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Emergency Contact</label>
+              {{ profile_form.emergency_contact }}
+            </div>
+          </div>
+        </div>
+        {% endif %}
+
+        <div class="flex flex-col sm:flex-row gap-3 pt-5 border-t border-slate-100">
+          <button type="submit"
+            class="flex-1 bg-blue-700 hover:bg-blue-800 text-white py-3 rounded-xl font-bold text-sm transition-colors shadow-sm shadow-blue-100">
+            Save Changes
+          </button>
+          <a href="{% url 'my_bookings' %}"
+            class="flex-1 flex items-center justify-center gap-2 bg-white border-2 border-slate-200 text-slate-700 py-3 rounded-xl font-semibold text-sm hover:bg-slate-50 hover:border-slate-300 transition-all">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/>
+            </svg>
+            My Bookings
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

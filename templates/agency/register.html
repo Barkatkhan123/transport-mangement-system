@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% block title %}Register Agency — TMS{% endblock %}
+
+{% block content %}
+<div class="min-h-[calc(100vh-64px)] bg-gradient-to-br from-slate-50 to-blue-50/50 py-12 px-4">
+  <div class="max-w-2xl mx-auto">
+
+    <!-- Header -->
+    <div class="text-center mb-8 fade-up">
+      <div class="w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-800 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-blue-200">
+        <svg class="w-9 h-9 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+        </svg>
+      </div>
+      <h1 class="text-2xl font-extrabold text-slate-800">Register Your Agency</h1>
+      <p class="text-slate-500 text-sm mt-2 max-w-sm mx-auto">Submit your details for admin review. You can start adding buses and trips after approval.</p>
+    </div>
+
+    <!-- Approval Process Info -->
+    <div class="bg-blue-50 border border-blue-200 rounded-2xl p-4 mb-6 fade-up">
+      <div class="flex items-start gap-3">
+        <svg class="w-5 h-5 text-blue-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <div class="text-sm text-blue-800">
+          <p class="font-bold mb-0.5">How it works</p>
+          <p class="text-blue-600 text-xs leading-relaxed">Submit your agency details → Admin reviews within 24 hours → Get approved → Add buses, drivers, and schedule trips</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden fade-up-2">
+      <div class="px-6 py-4 border-b border-slate-100">
+        <h2 class="font-bold text-slate-800">Agency Information</h2>
+        <p class="text-xs text-slate-400 mt-0.5">All fields marked with * are required</p>
+      </div>
+      <div class="p-6">
+        <form method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+
+            <div class="sm:col-span-2">
+              <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Agency Name *</label>
+              {{ form.name }}
+              {% if form.name.errors %}<p class="text-red-500 text-xs mt-1.5">{{ form.name.errors.0 }}</p>{% endif %}
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Registration Number *</label>
+              {{ form.registration_number }}
+              {% if form.registration_number.errors %}<p class="text-red-500 text-xs mt-1.5">{{ form.registration_number.errors.0 }}</p>{% endif %}
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">City *</label>
+              {{ form.city }}
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Email *</label>
+              {{ form.email }}
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Phone *</label>
+              {{ form.phone }}
+            </div>
+
+            <div class="sm:col-span-2">
+              <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Address *</label>
+              {{ form.address }}
+            </div>
+
+            <div class="sm:col-span-2">
+              <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Agency Logo</label>
+              <div class="border-2 border-dashed border-slate-200 rounded-xl p-5 text-center hover:border-blue-300 transition-colors">
+                {{ form.logo }}
+                <p class="text-xs text-slate-400 mt-2">Optional. PNG, JPG up to 2MB</p>
+              </div>
+            </div>
+
+          </div>
+
+          {% if form.non_field_errors %}
+          <div class="flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-xl mt-4">
+            <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/></svg>
+            {{ form.non_field_errors.0 }}
+          </div>
+          {% endif %}
+
+          <div class="flex flex-col sm:flex-row gap-3 mt-6 pt-5 border-t border-slate-100">
+            <button type="submit"
+              class="flex-1 bg-blue-700 hover:bg-blue-800 text-white py-3.5 rounded-xl font-bold text-sm transition-colors shadow-sm shadow-blue-200">
+              Submit for Approval →
+            </button>
+            <a href="{% url 'home' %}"
+              class="flex-1 text-center bg-white border-2 border-slate-200 text-slate-700 py-3.5 rounded-xl font-semibold text-sm hover:border-slate-300 hover:bg-slate-50 transition-all">
+              Cancel
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends 'agency/base_agency.html' %}
+{% block title %}Agencies — Admin | TMS{% endblock %}
+{% block page_title %}All Agencies{% endblock %}
+{% block page_subtitle %}Manage transport agency registrations{% endblock %}
+
+{% block content %}
+<div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden fade-up">
+  <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+    <h3 class="font-bold text-slate-800 text-sm">Agencies</h3>
+    <span class="badge badge-blue">{{ agencies|length }} total</span>
+  </div>
+  <div class="overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="border-b border-slate-50 bg-slate-50/60">
+          <th class="text-left px-5 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wide">Agency</th>
+          <th class="text-left px-5 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wide hidden md:table-cell">Manager</th>
+          <th class="text-left px-5 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wide hidden lg:table-cell">City</th>
+          <th class="text-left px-5 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wide hidden xl:table-cell">Reg. No</th>
+          <th class="text-left px-5 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wide">Status</th>
+          <th class="text-left px-5 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wide hidden sm:table-cell">Registered</th>
+          <th class="px-5 py-3"></th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-50">
+        {% for agency in agencies %}
+        <tr class="hover:bg-slate-50/70 transition-colors group">
+          <td class="px-5 py-4">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-50 to-violet-100 flex items-center justify-center font-extrabold text-violet-700 text-xs shrink-0">
+                {{ agency.name|slice:":2"|upper }}
+              </div>
+              <div>
+                <p class="font-bold text-slate-800 text-sm">{{ agency.name }}</p>
+                <p class="text-xs text-slate-400">{{ agency.email }}</p>
+              </div>
+            </div>
+          </td>
+          <td class="px-5 py-4 hidden md:table-cell">
+            <p class="font-medium text-slate-700 text-sm">{{ agency.manager.full_name }}</p>
+            <p class="text-xs text-slate-400">{{ agency.manager.email }}</p>
+          </td>
+          <td class="px-5 py-4 text-slate-600 text-sm hidden lg:table-cell">{{ agency.city }}</td>
+          <td class="px-5 py-4 hidden xl:table-cell">
+            <span class="font-mono text-xs text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md">{{ agency.registration_number }}</span>
+          </td>
+          <td class="px-5 py-4">
+            <span class="badge {% if agency.status == 'approved' %}badge-green{% elif agency.status == 'pending' %}badge-yellow{% else %}badge-red{% endif %}">
+              {{ agency.get_status_display }}
+            </span>
+          </td>
+          <td class="px-5 py-4 text-xs text-slate-400 hidden sm:table-cell">{{ agency.created_at|date:"d M Y" }}</td>
+          <td class="px-5 py-4">
+            <form action="{% url 'dashboard:approve_agency' agency.id %}" method="POST" class="flex gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
+              {% csrf_token %}
+              {% if agency.status != 'approved' %}
+              <button name="action" value="approve"
+                class="text-xs font-bold text-emerald-600 hover:text-emerald-800 transition-colors">
+                Approve
+              </button>
+              {% endif %}
+              {% if agency.status != 'suspended' %}
+              <button name="action" value="suspend"
+                class="text-xs font-bold text-red-500 hover:text-red-700 transition-colors">
+                Suspend
+              </button>
+              {% endif %}
+            </form>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7" class="px-5 py-16 text-center">
+            <p class="text-slate-400 font-medium">No agencies registered yet.</p>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

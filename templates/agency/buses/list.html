@@ -1,0 +1,102 @@
+{% extends 'agency/base_agency.html' %}
+{% block title %}Fleet — TMS{% endblock %}
+{% block page_title %}Bus Fleet{% endblock %}
+{% block page_subtitle %}Manage your registered buses{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-5 fade-up">
+  <p class="text-slate-400 text-sm font-medium"><span class="font-bold text-slate-700">{{ buses|length }}</span> bus{{ buses|length|pluralize:"es" }} registered</p>
+  <a href="{% url 'agency:bus_add' %}"
+    class="inline-flex items-center gap-1.5 bg-blue-700 hover:bg-blue-800 text-white px-4 py-2.5 rounded-xl text-sm font-bold transition-colors shadow-sm shadow-blue-200">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+    Add Bus
+  </a>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+  {% for bus in buses %}
+  <div class="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden fade-up group">
+    <!-- Bus image / placeholder -->
+    {% if bus.photo %}
+    <div class="relative overflow-hidden h-40">
+      <img src="{{ bus.photo.url }}" alt="{{ bus.registration_number }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"/>
+      <div class="absolute top-3 right-3">
+        <span class="badge {% if bus.status == 'active' %}badge-green{% elif bus.status == 'maintenance' %}badge-yellow{% else %}badge-red{% endif %}">
+          {{ bus.get_status_display }}
+        </span>
+      </div>
+    </div>
+    {% else %}
+    <div class="relative h-32 bg-gradient-to-br from-blue-50 via-blue-100 to-slate-100 flex items-center justify-center">
+      <svg class="w-14 h-14 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 17H5a2 2 0 01-2-2V7a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3m-9 0v2m6-2v2M3 12h18"/>
+      </svg>
+      <div class="absolute top-3 right-3">
+        <span class="badge {% if bus.status == 'active' %}badge-green{% elif bus.status == 'maintenance' %}badge-yellow{% else %}badge-red{% endif %}">
+          {{ bus.get_status_display }}
+        </span>
+      </div>
+    </div>
+    {% endif %}
+
+    <div class="p-4">
+      <!-- Registration + Model -->
+      <div class="mb-3">
+        <p class="font-extrabold text-slate-800 text-base">{{ bus.registration_number }}</p>
+        <p class="text-xs text-slate-400 mt-0.5">{{ bus.model_name|default:"—" }}{% if bus.year_of_manufacture %} · {{ bus.year_of_manufacture }}{% endif %}</p>
+      </div>
+
+      <!-- Badges row -->
+      <div class="flex flex-wrap gap-1.5 mb-3">
+        <span class="text-xs bg-blue-50 text-blue-700 px-2.5 py-1 rounded-full font-semibold">{{ bus.bus_type }}</span>
+        <span class="text-xs bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full font-medium">{{ bus.total_seats }} seats</span>
+        <span class="text-xs bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full font-medium">{{ bus.seat_layout }}</span>
+      </div>
+
+      <!-- Amenities -->
+      {% if bus.get_amenity_icons %}
+      <div class="flex gap-1.5 mb-4">
+        {% for amenity in bus.get_amenity_icons %}
+        <span title="{{ amenity.label }}" class="w-7 h-7 rounded-lg bg-slate-50 hover:bg-blue-50 flex items-center justify-center transition-colors cursor-default border border-slate-100">
+          <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ amenity.path }}"/>
+          </svg>
+        </span>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <!-- Actions -->
+      <div class="flex gap-2 pt-3 border-t border-slate-50">
+        <a href="{% url 'agency:bus_edit' bus.id %}"
+          class="flex-1 text-center text-xs font-bold text-blue-700 border border-blue-200 hover:bg-blue-50 hover:border-blue-300 py-2 rounded-xl transition-all">
+          Edit
+        </a>
+        <form action="{% url 'agency:bus_delete' bus.id %}" method="POST"
+          onsubmit="return confirm('Delete {{ bus.registration_number }}? This action cannot be undone.')" class="flex-1">
+          {% csrf_token %}
+          <button type="submit"
+            class="w-full text-xs font-bold text-red-500 border border-red-200 hover:bg-red-50 hover:border-red-300 py-2 rounded-xl transition-all">
+            Delete
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <div class="col-span-full bg-white rounded-2xl border border-slate-100 shadow-sm py-16 px-6 text-center fade-up">
+    <div class="w-20 h-20 bg-slate-100 rounded-3xl flex items-center justify-center mx-auto mb-4">
+      <svg class="w-10 h-10 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 17H5a2 2 0 01-2-2V7a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3m-9 0v2m6-2v2M3 12h18"/>
+      </svg>
+    </div>
+    <h3 class="text-lg font-bold text-slate-600 mb-1">No buses added yet</h3>
+    <p class="text-slate-400 text-sm mb-5">Add your first bus to start scheduling trips.</p>
+    <a href="{% url 'agency:bus_add' %}"
+      class="inline-flex items-center gap-1.5 bg-blue-700 hover:bg-blue-800 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-colors">
+      Add Your First Bus →
+    </a>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

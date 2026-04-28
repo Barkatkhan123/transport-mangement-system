@@ -1,0 +1,181 @@
+{% extends 'base.html' %}
+{% block title %}Your Ticket — {{ ticket.booking.booking_number }} | TMS{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+  <!-- Success Banner -->
+  <div class="bg-gradient-to-r from-emerald-500 to-green-600 rounded-2xl p-6 mb-8 text-center fade-up shadow-lg shadow-emerald-100">
+    <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+      <svg class="w-9 h-9 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+    </div>
+    <h2 class="text-white font-extrabold text-2xl">Booking Confirmed!</h2>
+    <p class="text-emerald-100 text-sm mt-1.5">A confirmation email has been sent to your inbox.</p>
+  </div>
+
+  <!-- Ticket Card -->
+  <div class="bg-white rounded-3xl shadow-2xl shadow-slate-200/80 overflow-hidden border border-slate-100 fade-up-2" id="ticket-card">
+
+    <!-- Ticket Header -->
+    <div class="bg-gradient-to-br from-blue-800 via-blue-900 to-slate-900 text-white px-7 py-6 relative overflow-hidden">
+      <!-- Background decoration -->
+      <div class="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/4"></div>
+      <div class="absolute bottom-0 left-0 w-40 h-40 bg-orange-500/10 rounded-full translate-y-1/2 -translate-x-1/4"></div>
+
+      <div class="relative">
+        <!-- Branding + Booking # -->
+        <div class="flex items-center justify-between mb-6">
+          <div class="flex items-center gap-2.5">
+            <div class="w-9 h-9 bg-orange-500 rounded-xl flex items-center justify-center shadow-lg shadow-orange-900/30">
+              <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/>
+                <path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H11a1 1 0 001-1V5a1 1 0 00-1-1H3z"/>
+                <path d="M14 7a1 1 0 00-1 1v6.05A2.5 2.5 0 0115.95 16H17a1 1 0 001-1v-5a1 1 0 00-.293-.707l-2-2A1 1 0 0015 7h-1z"/>
+              </svg>
+            </div>
+            <span class="font-extrabold text-lg tracking-wide">TMS</span>
+          </div>
+          <div class="text-right">
+            <p class="text-blue-300 text-xs font-medium uppercase tracking-wider">Booking No.</p>
+            <p class="font-mono font-bold text-xl text-orange-300">{{ ticket.booking.booking_number }}</p>
+          </div>
+        </div>
+
+        <!-- Route -->
+        <div class="flex items-center justify-between gap-4">
+          <div class="text-center shrink-0">
+            <p class="text-4xl font-black leading-none">{{ ticket.booking.trip.departure_datetime|date:"H:i" }}</p>
+            <p class="text-blue-200 font-semibold mt-1.5">{{ ticket.booking.trip.route.origin.name }}</p>
+            <p class="text-blue-400 text-xs mt-0.5">{{ ticket.booking.trip.departure_datetime|date:"d M Y" }}</p>
+          </div>
+          <div class="flex-1 flex flex-col items-center gap-2">
+            <p class="text-xs text-blue-300 font-medium">{{ ticket.booking.trip.route.duration_display }}</p>
+            <div class="w-full flex items-center gap-1">
+              <div class="w-2.5 h-2.5 rounded-full border-2 border-orange-400 bg-transparent shrink-0"></div>
+              <div class="flex-1 h-px bg-gradient-to-r from-orange-400 to-blue-400"></div>
+              <svg class="w-5 h-5 text-orange-400 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
+              </svg>
+            </div>
+            <p class="text-xs text-blue-400">{{ ticket.booking.trip.agency.name }}</p>
+          </div>
+          <div class="text-center shrink-0">
+            <p class="text-4xl font-black leading-none">{{ ticket.booking.trip.arrival_datetime|date:"H:i" }}</p>
+            <p class="text-blue-200 font-semibold mt-1.5">{{ ticket.booking.trip.route.destination.name }}</p>
+            <p class="text-blue-400 text-xs mt-0.5">{{ ticket.booking.trip.arrival_datetime|date:"d M Y" }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tear Line -->
+    <div class="relative flex items-center bg-white">
+      <div class="absolute -left-3.5 w-7 h-7 rounded-full bg-slate-50 border-2 border-slate-100 z-10"></div>
+      <div class="flex-1 border-t-2 border-dashed border-slate-200 mx-4"></div>
+      <div class="absolute -right-3.5 w-7 h-7 rounded-full bg-slate-50 border-2 border-slate-100 z-10"></div>
+    </div>
+
+    <!-- Ticket Body -->
+    <div class="px-7 py-5">
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-5">
+        <div>
+          <p class="text-xs text-slate-400 font-semibold uppercase tracking-wide mb-1">Passenger</p>
+          <p class="font-bold text-slate-800 text-sm">{{ ticket.booking.passenger.full_name }}</p>
+        </div>
+        <div>
+          <p class="text-xs text-slate-400 font-semibold uppercase tracking-wide mb-1">Seat(s)</p>
+          <div class="flex flex-wrap gap-1">
+            {% for seat in ticket.booking.seats.all %}
+            <span class="bg-blue-100 text-blue-700 text-xs font-bold px-2 py-0.5 rounded-md">{{ seat.seat_number }}</span>
+            {% empty %}
+            <span class="font-bold text-slate-800 text-sm">{{ ticket.booking.seat_numbers }}</span>
+            {% endfor %}
+          </div>
+        </div>
+        <div>
+          <p class="text-xs text-slate-400 font-semibold uppercase tracking-wide mb-1">Bus</p>
+          <p class="font-bold text-slate-800 text-sm">{{ ticket.booking.trip.bus.registration_number }}</p>
+        </div>
+        <div>
+          <p class="text-xs text-slate-400 font-semibold uppercase tracking-wide mb-1">Bus Type</p>
+          <p class="font-bold text-slate-800 text-sm">{{ ticket.booking.trip.bus.bus_type }}</p>
+        </div>
+        <div>
+          <p class="text-xs text-slate-400 font-semibold uppercase tracking-wide mb-1">Amount Paid</p>
+          <p class="font-bold text-blue-700 text-sm">PKR {{ ticket.booking.total_price|floatformat:0 }}</p>
+        </div>
+        <div>
+          <p class="text-xs text-slate-400 font-semibold uppercase tracking-wide mb-1">Status</p>
+          <span class="badge badge-green">Confirmed</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tear Line 2 -->
+    <div class="relative flex items-center bg-white">
+      <div class="absolute -left-3.5 w-7 h-7 rounded-full bg-slate-50 border-2 border-slate-100 z-10"></div>
+      <div class="flex-1 border-t-2 border-dashed border-slate-200 mx-4"></div>
+      <div class="absolute -right-3.5 w-7 h-7 rounded-full bg-slate-50 border-2 border-slate-100 z-10"></div>
+    </div>
+
+    <!-- QR Section -->
+    <div class="px-7 py-6 flex flex-col sm:flex-row items-center gap-6 bg-slate-50/60">
+      <div class="shrink-0">
+        {% if ticket.qr_code_image %}
+        <div class="p-3 bg-white rounded-2xl shadow-md border border-slate-100">
+          <img src="{{ ticket.qr_code_image.url }}" alt="QR Code" class="w-40 h-40 rounded-lg"/>
+        </div>
+        {% else %}
+        <div class="w-[176px] h-[176px] bg-white rounded-2xl shadow-md border border-slate-100 flex items-center justify-center">
+          <div class="grid grid-cols-4 gap-1 opacity-20">
+            {% for i in "12345678901234567890123456789012" %}
+            <div class="w-3 h-3 bg-slate-800 rounded-sm"></div>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+      </div>
+      <div class="text-center sm:text-left">
+        <p class="font-bold text-slate-700 mb-1">Scan at Boarding</p>
+        <p class="text-xs text-slate-400 mb-3 leading-relaxed">Show this QR code to the conductor at the boarding gate for verification.</p>
+        <p class="font-mono text-xs text-slate-500 bg-white border border-slate-200 px-3 py-1.5 rounded-lg break-all max-w-xs">
+          {{ ticket.ticket_number }}
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="flex flex-col sm:flex-row gap-3 mt-6 no-print fade-up-3">
+    <button onclick="window.print()"
+      class="flex-1 flex items-center justify-center gap-2 bg-white border-2 border-slate-200 text-slate-700 py-3.5 rounded-xl font-semibold text-sm hover:border-blue-300 hover:text-blue-700 transition-all">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
+      </svg>
+      Print / Download
+    </button>
+    <a href="{% url 'my_bookings' %}"
+      class="flex-1 flex items-center justify-center gap-2 bg-blue-700 hover:bg-blue-800 text-white py-3.5 rounded-xl font-semibold text-sm transition-colors shadow-sm shadow-blue-200">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+      </svg>
+      My Bookings
+    </a>
+    <a href="{% url 'home' %}"
+      class="flex-1 flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white py-3.5 rounded-xl font-semibold text-sm transition-colors shadow-sm shadow-orange-100">
+      Book Another
+    </a>
+  </div>
+
+</div>
+
+<style>
+  @media print {
+    nav, footer, .no-print { display: none !important; }
+    body { background: white; }
+    #ticket-card { box-shadow: none !important; border: 1px solid #e2e8f0 !important; }
+  }
+</style>
+{% endblock %}

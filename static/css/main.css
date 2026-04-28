@@ -1,0 +1,61 @@
+/* ── Fonts ────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+/* ── Base ─────────────────────────────────────────────────── */
+* { box-sizing: border-box; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+  font-family: 'Poppins', sans-serif;
+}
+
+/* ── Scrollbar ────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: #f1f5f9; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+/* Dark mode scrollbar */
+.dark ::-webkit-scrollbar-track { background: #0f172a; }
+.dark ::-webkit-scrollbar-thumb { background: #334155; }
+.dark ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+/* ── Seat map ─────────────────────────────────────────────── */
+.seat-btn { transition: all 0.15s ease; }
+.seat-btn:hover:not(:disabled) { transform: scale(1.12); box-shadow: 0 4px 12px rgba(29,78,216,0.2); }
+.seat-btn.selected { background: #1D4ED8 !important; color: white !important; border-color: #1D4ED8 !important; }
+.seat-btn:disabled { cursor: not-allowed; opacity: 0.7; }
+
+/* ── Fade-in ──────────────────────────────────────────────── */
+.fade-in { animation: fadeIn 0.3s ease-in; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Toast ────────────────────────────────────────────────── */
+.toast { animation: toastIn 0.3s ease; }
+@keyframes toastIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+
+/* ── Dark mode — surface overrides ───────────────────────── */
+.dark .bg-white { background-color: #1e293b !important; }
+.dark .bg-slate-50 { background-color: #0f172a !important; }
+.dark .bg-gray-50  { background-color: #0f172a !important; }
+.dark .border-slate-100 { border-color: #334155 !important; }
+.dark .text-slate-800 { color: #f1f5f9 !important; }
+.dark .text-slate-600 { color: #94a3b8 !important; }
+.dark .text-slate-500 { color: #64748b !important; }
+
+/* ── Print ────────────────────────────────────────────────── */
+@media print {
+  nav, footer, .no-print, button, #theme-toggle { display: none !important; }
+  body { background: white; }
+  #ticket-card { box-shadow: none !important; border: 1px solid #ddd; }
+}

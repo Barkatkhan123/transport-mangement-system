@@ -1,0 +1,127 @@
+<footer class="bg-slate-900 text-slate-400 mt-16">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 pb-8">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-10 pb-10 border-b border-slate-800">
+
+      <!-- Brand -->
+      <div class="md:col-span-1">
+        <div class="flex items-center gap-2.5 mb-4">
+          <div class="w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-700 rounded-xl flex items-center justify-center shadow-lg shadow-orange-900/30">
+            <i class="fa-solid fa-bus-simple text-white"></i>
+          </div>
+          <span class="font-extrabold text-white text-xl tracking-wide">TMS</span>
+        </div>
+        <p class="text-sm leading-relaxed mb-5">Book bus tickets easily. Safe, fast, and reliable transport connections across Pakistan.</p>
+
+        <!-- Social Links -->
+        <div class="flex items-center gap-3">
+          <a href="#" aria-label="Facebook" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-blue-600 flex items-center justify-center transition-colors text-slate-400 hover:text-white">
+            <i class="fa-brands fa-facebook-f text-xs"></i>
+          </a>
+          <a href="#" aria-label="Twitter / X" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-sky-500 flex items-center justify-center transition-colors text-slate-400 hover:text-white">
+            <i class="fa-brands fa-x-twitter text-xs"></i>
+          </a>
+          <a href="#" aria-label="Instagram" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-pink-600 flex items-center justify-center transition-colors text-slate-400 hover:text-white">
+            <i class="fa-brands fa-instagram text-xs"></i>
+          </a>
+          <a href="#" aria-label="WhatsApp" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-emerald-600 flex items-center justify-center transition-colors text-slate-400 hover:text-white">
+            <i class="fa-brands fa-whatsapp text-xs"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Passengers -->
+      <div>
+        <h4 class="text-white font-bold mb-4 text-sm uppercase tracking-wider">Passengers</h4>
+        <ul class="space-y-2.5 text-sm">
+          <li>
+            <a href="{% url 'home' %}" class="hover:text-white transition-colors flex items-center gap-2">
+              <i class="fa-solid fa-magnifying-glass text-slate-600 text-xs w-3.5"></i> Search Buses
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'register' %}" class="hover:text-white transition-colors flex items-center gap-2">
+              <i class="fa-solid fa-user-plus text-slate-600 text-xs w-3.5"></i> Create Account
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'login' %}" class="hover:text-white transition-colors flex items-center gap-2">
+              <i class="fa-solid fa-right-to-bracket text-slate-600 text-xs w-3.5"></i> Sign In
+            </a>
+          </li>
+          {% if user.is_authenticated %}
+          <li>
+            <a href="{% url 'my_bookings' %}" class="hover:text-white transition-colors flex items-center gap-2">
+              <i class="fa-solid fa-ticket text-slate-600 text-xs w-3.5"></i> My Bookings
+            </a>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+
+      <!-- Agencies -->
+      <div>
+        <h4 class="text-white font-bold mb-4 text-sm uppercase tracking-wider">For Agencies</h4>
+        <ul class="space-y-2.5 text-sm">
+          <li>
+            <a href="{% url 'agency:register' %}" class="hover:text-white transition-colors flex items-center gap-2">
+              <i class="fa-solid fa-building text-slate-600 text-xs w-3.5"></i> Register Agency
+            </a>
+          </li>
+          {% if user.is_authenticated and user.role == 'agency' %}
+          <li>
+            <a href="{% url 'agency:dashboard' %}" class="hover:text-white transition-colors flex items-center gap-2">
+              <i class="fa-solid fa-gauge text-slate-600 text-xs w-3.5"></i> Dashboard
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'agency:trips' %}" class="hover:text-white transition-colors flex items-center gap-2">
+              <i class="fa-solid fa-route text-slate-600 text-xs w-3.5"></i> Manage Trips
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'agency:buses' %}" class="hover:text-white transition-colors flex items-center gap-2">
+              <i class="fa-solid fa-bus text-slate-600 text-xs w-3.5"></i> Fleet
+            </a>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+
+      <!-- Contact -->
+      <div>
+        <h4 class="text-white font-bold mb-4 text-sm uppercase tracking-wider">Contact</h4>
+        <ul class="space-y-3 text-sm">
+          <li class="flex items-start gap-2.5">
+            <i class="fa-solid fa-envelope text-slate-500 text-xs mt-1 w-3.5 shrink-0"></i>
+            <span>support@tms.pk</span>
+          </li>
+          <li class="flex items-start gap-2.5">
+            <i class="fa-solid fa-phone text-slate-500 text-xs mt-1 w-3.5 shrink-0"></i>
+            <span>+92 341 5585144</span>
+          </li>
+          <li class="flex items-start gap-2.5">
+            <i class="fa-solid fa-location-dot text-slate-500 text-xs mt-1 w-3.5 shrink-0"></i>
+            <span>Swat, Pakistan</span>
+          </li>
+        </ul>
+
+        <!-- Trust badges -->
+        <div class="mt-5 flex flex-wrap gap-2">
+          <span class="inline-flex items-center gap-1.5 text-[11px] font-semibold bg-slate-800 text-emerald-400 px-2.5 py-1 rounded-full">
+            <i class="fa-solid fa-shield-halved text-[10px]"></i> Secure Payments
+          </span>
+          <span class="inline-flex items-center gap-1.5 text-[11px] font-semibold bg-slate-800 text-blue-400 px-2.5 py-1 rounded-full">
+            <i class="fa-solid fa-qrcode text-[10px]"></i> QR Tickets
+          </span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Bottom bar -->
+    <div class="pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+      <p>&copy; 2026 Transport Management System &mdash; Final Year Project.</p>
+     
+    </div>
+  </div>
+</footer>

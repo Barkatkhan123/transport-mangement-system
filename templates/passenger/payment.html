@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+{% block title %}Payment — {{ booking.booking_number }} | TMS{% endblock %}
+
+{% block content %}
+<!-- Progress Steps -->
+<div class="bg-white border-b border-slate-100">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <div class="flex items-center justify-center gap-2 text-xs font-semibold">
+      <div class="flex items-center gap-1.5 text-slate-400">
+        <div class="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center text-xs">
+          <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+        </div>
+        <span class="hidden sm:inline text-slate-400">Select Seats</span>
+      </div>
+      <div class="w-8 h-px bg-emerald-300"></div>
+      <div class="flex items-center gap-1.5 text-slate-400">
+        <div class="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center text-xs">
+          <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+        </div>
+        <span class="hidden sm:inline text-slate-400">Confirm</span>
+      </div>
+      <div class="w-8 h-px bg-slate-200"></div>
+      <div class="flex items-center gap-1.5 text-blue-700">
+        <div class="w-6 h-6 rounded-full bg-blue-700 flex items-center justify-center text-white text-xs font-bold">3</div>
+        <span class="hidden sm:inline font-bold">Payment</span>
+      </div>
+      <div class="w-8 h-px bg-slate-200"></div>
+      <div class="flex items-center gap-1.5 text-slate-400">
+        <div class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 text-xs font-bold">4</div>
+        <span class="hidden sm:inline">Ticket</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+  <!-- Header -->
+  <div class="text-center mb-8 fade-up">
+    <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-700 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-blue-200">
+      <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+      </svg>
+    </div>
+    <h1 class="text-2xl font-extrabold text-slate-800">Secure Payment</h1>
+    <p class="text-slate-500 text-sm mt-1">Booking <span class="font-mono font-semibold text-blue-700">#{{ booking.booking_number }}</span></p>
+  </div>
+
+  <!-- Order Summary -->
+  <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden mb-5 fade-up">
+    <div class="px-5 py-4 border-b border-slate-50">
+      <h2 class="font-bold text-slate-800 text-sm">Order Summary</h2>
+    </div>
+    <div class="p-5">
+      <div class="flex items-center gap-4 mb-4">
+        <div class="w-11 h-11 rounded-xl bg-blue-50 flex items-center justify-center shrink-0">
+          <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+          </svg>
+        </div>
+        <div class="flex-1">
+          <p class="font-semibold text-slate-800 text-sm">{{ booking.trip.route.origin.name }} → {{ booking.trip.route.destination.name }}</p>
+          <p class="text-xs text-slate-400 mt-0.5">{{ booking.trip.departure_datetime|date:"d M Y · H:i" }} · {{ booking.trip.agency.name }}</p>
+        </div>
+      </div>
+      <div class="space-y-1.5 text-sm border-t border-slate-50 pt-4">
+        <div class="flex justify-between text-slate-600">
+          <span>Seats: <span class="font-semibold text-slate-800">{{ booking.seat_numbers }}</span></span>
+          <span>{{ booking.seats.count }} seat(s)</span>
+        </div>
+        <div class="flex justify-between text-slate-600">
+          <span>Service fee</span>
+          <span class="text-emerald-600 font-semibold">Free</span>
+        </div>
+      </div>
+      <div class="flex justify-between items-center font-bold border-t border-slate-100 mt-3 pt-3">
+        <span class="text-slate-700">Total</span>
+        <span class="text-2xl font-black text-blue-700">PKR {{ booking.total_price|floatformat:0 }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Payment Form -->
+  <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden fade-up-2">
+    <div class="px-5 py-4 border-b border-slate-50">
+      <h2 class="font-bold text-slate-800 text-sm">Choose Payment Method</h2>
+    </div>
+    <div class="p-5">
+      <form action="{% url 'payment' booking.id %}" method="POST" id="payment-form">
+        {% csrf_token %}
+
+        <!-- Payment Methods -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
+          <label class="cursor-pointer">
+            <input type="radio" name="method" value="card" checked class="sr-only peer"/>
+            <div class="border-2 border-slate-200 peer-checked:border-blue-600 peer-checked:bg-blue-50 rounded-xl p-4 text-center transition-all hover:border-blue-300 hover:bg-blue-50/50">
+              <div class="w-10 h-10 rounded-xl bg-slate-100 peer-checked:bg-blue-100 flex items-center justify-center mx-auto mb-2">
+                <svg class="w-5 h-5 text-slate-500 peer-checked:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                </svg>
+              </div>
+              <p class="text-xs font-bold text-slate-700">Debit / Credit Card</p>
+            </div>
+          </label>
+          <label class="cursor-pointer">
+            <input type="radio" name="method" value="mobile_wallet" class="sr-only peer"/>
+            <div class="border-2 border-slate-200 peer-checked:border-blue-600 peer-checked:bg-blue-50 rounded-xl p-4 text-center transition-all hover:border-blue-300 hover:bg-blue-50/50">
+              <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center mx-auto mb-2">
+                <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                </svg>
+              </div>
+              <p class="text-xs font-bold text-slate-700">EasyPaisa / JazzCash</p>
+            </div>
+          </label>
+          <label class="cursor-pointer">
+            <input type="radio" name="method" value="bank_transfer" class="sr-only peer"/>
+            <div class="border-2 border-slate-200 peer-checked:border-blue-600 peer-checked:bg-blue-50 rounded-xl p-4 text-center transition-all hover:border-blue-300 hover:bg-blue-50/50">
+              <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center mx-auto mb-2">
+                <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"/>
+                </svg>
+              </div>
+              <p class="text-xs font-bold text-slate-700">Bank Transfer</p>
+            </div>
+          </label>
+        </div>
+
+        <!-- Demo Notice -->
+        <div class="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-xl p-4 mb-5 text-sm">
+          <svg class="w-5 h-5 text-amber-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <p class="text-amber-800"><strong class="font-bold">Demo Mode:</strong> This is a simulated payment. Click Pay Now to confirm your booking and receive your QR code ticket.</p>
+        </div>
+
+        <!-- Security Badges -->
+        <div class="flex items-center justify-center gap-4 mb-5 text-xs text-slate-400">
+          <div class="flex items-center gap-1">
+            <svg class="w-3.5 h-3.5 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/></svg>
+            256-bit SSL
+          </div>
+          <div class="w-px h-3 bg-slate-200"></div>
+          <div class="flex items-center gap-1">
+            <svg class="w-3.5 h-3.5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+            Secure Payment
+          </div>
+          <div class="w-px h-3 bg-slate-200"></div>
+          <div class="flex items-center gap-1">
+            <svg class="w-3.5 h-3.5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Instant Confirmation
+          </div>
+        </div>
+
+        <button type="submit" id="pay-btn"
+          class="w-full bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white py-4 rounded-xl font-black text-base transition-all flex items-center justify-center gap-2.5 shadow-lg shadow-emerald-100 hover:shadow-emerald-200">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+          </svg>
+          Pay PKR {{ booking.total_price|floatformat:0 }}
+        </button>
+      </form>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  document.getElementById('payment-form').addEventListener('submit', function() {
+    const btn = document.getElementById('pay-btn');
+    btn.disabled = true;
+    btn.innerHTML = `
+      <svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+      </svg>
+      Processing Payment...`;
+  });
+</script>
+{% endblock %}

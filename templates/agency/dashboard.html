@@ -1,0 +1,159 @@
+{% extends 'agency/base_agency.html' %}
+{% block title %}Dashboard — {{ agency.name }} | TMS{% endblock %}
+{% block page_title %}Good to see you, {{ request.user.full_name|truncatechars:20 }} 👋{% endblock %}
+{% block page_subtitle %}{{ agency.name }} — Agency Dashboard{% endblock %}
+
+{% block content %}
+
+<!-- Stats Grid -->
+<div class="grid grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
+
+  <div class="fade-up bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:shadow-md transition-shadow overflow-hidden relative">
+    <div class="absolute top-0 left-0 w-1 h-full bg-blue-500 rounded-l-2xl"></div>
+    <div class="flex items-start justify-between mb-3">
+      <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
+        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4"/></svg>
+      </div>
+      <span class="badge badge-blue">Trips</span>
+    </div>
+    <p class="text-3xl font-extrabold text-slate-800 tabular-nums">{{ total_trips }}</p>
+    <p class="text-xs text-slate-400 mt-1 font-medium">Total scheduled</p>
+  </div>
+
+  <div class="fade-up-2 bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:shadow-md transition-shadow overflow-hidden relative">
+    <div class="absolute top-0 left-0 w-1 h-full bg-emerald-500 rounded-l-2xl"></div>
+    <div class="flex items-start justify-between mb-3">
+      <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
+        <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+      </div>
+      <span class="badge badge-green">Bookings</span>
+    </div>
+    <p class="text-3xl font-extrabold text-slate-800 tabular-nums">{{ total_bookings }}</p>
+    <p class="text-xs text-emerald-600 mt-1 font-semibold">+{{ today_bookings }} today</p>
+  </div>
+
+  <div class="fade-up-3 bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:shadow-md transition-shadow overflow-hidden relative">
+    <div class="absolute top-0 left-0 w-1 h-full bg-orange-500 rounded-l-2xl"></div>
+    <div class="flex items-start justify-between mb-3">
+      <div class="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center">
+        <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      </div>
+      <span class="badge badge-yellow">Revenue</span>
+    </div>
+    <p class="text-2xl font-extrabold text-slate-800 tabular-nums">PKR {{ total_revenue|floatformat:0 }}</p>
+    <p class="text-xs text-slate-400 mt-1 font-medium">Total earned</p>
+  </div>
+
+  <div class="fade-up-4 bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:shadow-md transition-shadow overflow-hidden relative">
+    <div class="absolute top-0 left-0 w-1 h-full bg-violet-500 rounded-l-2xl"></div>
+    <div class="flex items-start justify-between mb-3">
+      <div class="w-10 h-10 rounded-xl bg-violet-50 flex items-center justify-center">
+        <svg class="w-5 h-5 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 17H5a2 2 0 01-2-2V7a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3"/></svg>
+      </div>
+      <span class="badge badge-purple">Fleet</span>
+    </div>
+    <p class="text-3xl font-extrabold text-slate-800 tabular-nums">{{ active_buses }}</p>
+    <p class="text-xs text-slate-400 mt-1 font-medium">{{ total_drivers }} active drivers</p>
+  </div>
+
+</div>
+
+<!-- Quick Actions -->
+<div class="flex flex-wrap items-center gap-2 mb-6 fade-up">
+  <span class="text-xs font-semibold text-slate-400 uppercase tracking-wide mr-1">Quick Actions:</span>
+  <a href="{% url 'agency:trip_schedule' %}" class="inline-flex items-center gap-1.5 bg-blue-700 hover:bg-blue-800 text-white text-xs font-semibold px-3.5 py-2 rounded-xl shadow-sm shadow-blue-200 transition-all hover:shadow-blue-300">
+    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+    Schedule Trip
+  </a>
+  <a href="{% url 'agency:bus_add' %}" class="inline-flex items-center gap-1.5 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold px-3.5 py-2 rounded-xl border border-slate-200 shadow-sm transition-all">
+    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+    Add Bus
+  </a>
+  <a href="{% url 'agency:driver_add' %}" class="inline-flex items-center gap-1.5 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold px-3.5 py-2 rounded-xl border border-slate-200 shadow-sm transition-all">
+    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+    Add Driver
+  </a>
+  <a href="{% url 'agency:route_add' %}" class="inline-flex items-center gap-1.5 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold px-3.5 py-2 rounded-xl border border-slate-200 shadow-sm transition-all">
+    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+    Add Route
+  </a>
+</div>
+
+<!-- Bottom Panels -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+
+  <!-- Upcoming Trips -->
+  <div class="bg-white rounded-2xl border border-slate-100 shadow-sm fade-up overflow-hidden">
+    <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+      <div class="flex items-center gap-2">
+        <div class="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center">
+          <svg class="w-3.5 h-3.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        </div>
+        <h3 class="font-semibold text-slate-800 text-sm">Upcoming Trips</h3>
+      </div>
+      <a href="{% url 'agency:trips' %}" class="text-xs font-semibold text-blue-600 hover:text-blue-800 transition-colors">View all →</a>
+    </div>
+    <div class="divide-y divide-slate-50">
+      {% for trip in upcoming_trips %}
+      <div class="group px-5 py-3.5 hover:bg-slate-50/70 transition-colors flex items-center gap-4">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center shrink-0">
+          <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="font-semibold text-slate-700 text-sm truncate">{{ trip.route.origin.name }} → {{ trip.route.destination.name }}</p>
+          <p class="text-xs text-slate-400 mt-0.5">{{ trip.departure_datetime|date:"d M · H:i" }} · <span class="font-medium text-slate-500">{{ trip.bus.registration_number }}</span></p>
+        </div>
+        <div class="text-right shrink-0">
+          <p class="text-sm font-bold text-blue-700 tabular-nums">PKR {{ trip.base_price|floatformat:0 }}</p>
+          <p class="text-xs text-emerald-600 font-medium mt-0.5">{{ trip.available_seats_count }} left</p>
+        </div>
+      </div>
+      {% empty %}
+      <div class="px-5 py-10 text-center">
+        <svg class="w-10 h-10 text-slate-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        <p class="text-sm text-slate-400">No upcoming trips.</p>
+        <a href="{% url 'agency:trip_schedule' %}" class="text-xs text-blue-600 font-semibold mt-1 inline-block hover:underline">Schedule one →</a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Recent Bookings -->
+  <div class="bg-white rounded-2xl border border-slate-100 shadow-sm fade-up-2 overflow-hidden">
+    <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+      <div class="flex items-center gap-2">
+        <div class="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center">
+          <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        </div>
+        <h3 class="font-semibold text-slate-800 text-sm">Recent Bookings</h3>
+      </div>
+      <a href="{% url 'agency:bookings' %}" class="text-xs font-semibold text-blue-600 hover:text-blue-800 transition-colors">View all →</a>
+    </div>
+    <div class="divide-y divide-slate-50">
+      {% for booking in recent_bookings %}
+      <div class="px-5 py-3.5 hover:bg-slate-50/70 transition-colors flex items-center gap-4">
+        <div class="w-9 h-9 rounded-full bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center font-bold text-slate-600 text-xs shrink-0">
+          {{ booking.passenger.full_name|slice:":1" }}{{ booking.passenger.full_name.split|last|slice:":1" }}
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="font-semibold text-slate-700 text-sm truncate">{{ booking.passenger.full_name }}</p>
+          <p class="text-xs text-slate-400 mt-0.5 font-mono truncate">{{ booking.booking_number }}</p>
+        </div>
+        <div class="text-right shrink-0">
+          <p class="text-sm font-bold text-slate-700 tabular-nums">PKR {{ booking.total_price|floatformat:0 }}</p>
+          <span class="badge {% if booking.status == 'confirmed' %}badge-green{% elif booking.status == 'pending' %}badge-yellow{% else %}badge-red{% endif %}">
+            {{ booking.get_status_display }}
+          </span>
+        </div>
+      </div>
+      {% empty %}
+      <div class="px-5 py-10 text-center">
+        <svg class="w-10 h-10 text-slate-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        <p class="text-sm text-slate-400">No bookings yet.</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+</div>
+{% endblock %}

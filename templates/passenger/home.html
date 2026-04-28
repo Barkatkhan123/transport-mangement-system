@@ -1,0 +1,434 @@
+{% extends 'base.html' %}
+{% block title %}TMS — Book Bus Tickets Online{% endblock %}
+
+{% block content %}
+
+<!-- ═══════════════════════════════════════════
+     HERO SLIDER
+════════════════════════════════════════════ -->
+<section class="hero-slider relative overflow-hidden" id="hero-slider" style="min-height:520px;height:72vh;">
+
+  <div class="slider-track h-full" id="slider-track" style="height:100%;">
+
+    <!-- Slide 1 · Navy Blue -->
+    <div class="slider-slide h-full" style="background:linear-gradient(135deg,#0c1a3a 0%,#1e3a8a 55%,#1D4ED8 100%);">
+      <div class="absolute inset-0 pointer-events-none overflow-hidden">
+        <div class="absolute -top-40 -right-40 w-[500px] h-[500px] rounded-full bg-blue-500/10 blur-3xl"></div>
+        <div class="absolute -bottom-20 -left-20 w-[300px] h-[300px] rounded-full bg-blue-300/10 blur-3xl"></div>
+        <svg class="absolute inset-0 w-full h-full opacity-[0.04]" xmlns="http://www.w3.org/2000/svg">
+          <defs><pattern id="g1" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0L0 0 0 40" fill="none" stroke="white" stroke-width="1"/></pattern></defs>
+          <rect width="100%" height="100%" fill="url(#g1)"/>
+        </svg>
+      </div>
+      <div class="relative h-full flex items-center max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 pb-16 sm:pb-0">
+        <div class="max-w-lg">
+          <div class="inline-flex items-center gap-2 bg-blue-500/15 text-blue-300 text-xs font-semibold px-3 py-1.5 rounded-full border border-blue-500/20 mb-5">
+            <span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse flex-shrink-0"></span>
+            <span>Trusted by 10,000+ passengers</span>
+          </div>
+          <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black text-white leading-[1.1] tracking-tight mb-3 sm:mb-4">
+            Travel Smarter.<br/>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-amber-300">Book Faster.</span>
+          </h1>
+          <p class="text-slate-300 text-sm sm:text-lg leading-relaxed max-w-sm sm:max-w-none">
+            Find &amp; book bus tickets across 50+ cities. Instant QR tickets, secure payments, real-time seats.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 2 · Emerald -->
+    <div class="slider-slide h-full" style="background:linear-gradient(135deg,#064e3b 0%,#065f46 55%,#047857 100%);">
+      <div class="absolute inset-0 pointer-events-none overflow-hidden">
+        <div class="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-emerald-400/10 blur-3xl"></div>
+        <div class="absolute bottom-0 left-0 w-[350px] h-[350px] rounded-full bg-teal-300/10 blur-3xl"></div>
+        <svg class="absolute inset-0 w-full h-full opacity-[0.04]" xmlns="http://www.w3.org/2000/svg">
+          <defs><pattern id="g2" width="50" height="50" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white"/></pattern></defs>
+          <rect width="100%" height="100%" fill="url(#g2)"/>
+        </svg>
+      </div>
+      <div class="relative h-full flex items-center max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 pb-16 sm:pb-0">
+        <div class="max-w-lg">
+          <div class="inline-flex items-center gap-2 bg-emerald-500/20 text-emerald-300 text-xs font-semibold px-3 py-1.5 rounded-full border border-emerald-500/30 mb-5">
+            <i class="fa-solid fa-location-dot text-emerald-400 flex-shrink-0"></i>
+            <span>50+ Cities Connected</span>
+          </div>
+          <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black text-white leading-[1.1] tracking-tight mb-3 sm:mb-4">
+            One Platform.<br/>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 to-teal-200">Endless Routes.</span>
+          </h1>
+          <p class="text-emerald-50/80 text-sm sm:text-lg leading-relaxed max-w-sm sm:max-w-none">
+            Connect to major cities across Pakistan. Compare prices, choose your seat, and travel with confidence.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 3 · Indigo/Purple -->
+    <div class="slider-slide h-full" style="background:linear-gradient(135deg,#1e1b4b 0%,#312e81 55%,#4338ca 100%);">
+      <div class="absolute inset-0 pointer-events-none overflow-hidden">
+        <div class="absolute -top-20 right-10 w-[450px] h-[450px] rounded-full bg-purple-500/12 blur-3xl"></div>
+        <div class="absolute bottom-0 -left-10 w-[350px] h-[350px] rounded-full bg-indigo-400/15 blur-3xl"></div>
+        <svg class="absolute inset-0 w-full h-full opacity-[0.04]" xmlns="http://www.w3.org/2000/svg">
+          <defs><pattern id="g3" width="60" height="60" patternUnits="userSpaceOnUse"><path d="M60 0L0 0 0 60" fill="none" stroke="white" stroke-width=".6"/><path d="M0 30h60M30 0v60" fill="none" stroke="white" stroke-width=".3"/></pattern></defs>
+          <rect width="100%" height="100%" fill="url(#g3)"/>
+        </svg>
+      </div>
+      <div class="relative h-full flex items-center max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 pb-16 sm:pb-0">
+        <div class="max-w-lg">
+          <div class="inline-flex items-center gap-2 bg-purple-500/20 text-purple-300 text-xs font-semibold px-3 py-1.5 rounded-full border border-purple-500/30 mb-5">
+            <i class="fa-solid fa-shield-halved text-purple-300 flex-shrink-0"></i>
+            <span>100% Secure Payments</span>
+          </div>
+          <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black text-white leading-[1.1] tracking-tight mb-3 sm:mb-4">
+            Safe. Secure.<br/>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-pink-300">On Time.</span>
+          </h1>
+          <p class="text-purple-100/80 text-sm sm:text-lg leading-relaxed max-w-sm sm:max-w-none">
+            Verified bus operators, secure payments, and QR-coded tickets for a worry-free journey every time.
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /slider-track -->
+
+  <!-- Arrows (hidden on mobile, shown sm+) -->
+  <button class="slider-arrow prev" id="slider-prev" aria-label="Previous slide"><i class="fa-solid fa-chevron-left"></i></button>
+  <button class="slider-arrow next" id="slider-next" aria-label="Next slide"><i class="fa-solid fa-chevron-right"></i></button>
+
+  <!-- Dots -->
+  <div class="absolute bottom-4 left-0 right-0 flex justify-center gap-2 z-20" id="slider-dots">
+    <button class="slider-dot active" data-slide="0" aria-label="Slide 1"></button>
+    <button class="slider-dot" data-slide="1" aria-label="Slide 2"></button>
+    <button class="slider-dot" data-slide="2" aria-label="Slide 3"></button>
+  </div>
+
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SEARCH CARD
+════════════════════════════════════════════ -->
+<section class="relative z-10 -mt-8 sm:-mt-14 pb-8 sm:pb-10 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-4xl mx-auto">
+    <div class="bg-white dark:bg-slate-800 rounded-2xl sm:rounded-3xl shadow-2xl shadow-black/20 dark:shadow-black/40 p-5 sm:p-7 border border-slate-100 dark:border-slate-700">
+
+      <div class="flex items-center gap-2.5 mb-4 sm:mb-5">
+        <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center shadow-md shadow-blue-200 dark:shadow-blue-900 flex-shrink-0">
+          <i class="fa-solid fa-magnifying-glass text-white text-sm"></i>
+        </div>
+        <h2 class="font-bold text-slate-800 dark:text-white text-base sm:text-lg">Search Buses</h2>
+      </div>
+
+      <form action="{% url 'search_trips' %}" method="GET">
+        <!-- On mobile: 1 col. sm: 2 col. lg: 4 col -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wide">From</label>
+            <div class="relative">
+              <i class="fa-solid fa-circle-dot absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm pointer-events-none"></i>
+              <select name="origin" required class="w-full pl-9 pr-3 py-3 rounded-xl border-2 border-slate-200 dark:border-slate-600 focus:border-blue-500 focus:outline-none bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-sm font-medium transition-all appearance-none">
+                <option value="">Select City</option>
+                {% for city in cities %}
+                  <option value="{{ city.id }}">{{ city.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wide">To</label>
+            <div class="relative">
+              <i class="fa-solid fa-location-dot absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm pointer-events-none"></i>
+              <select name="destination" required class="w-full pl-9 pr-3 py-3 rounded-xl border-2 border-slate-200 dark:border-slate-600 focus:border-blue-500 focus:outline-none bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-sm font-medium transition-all appearance-none">
+                <option value="">Select City</option>
+                {% for city in cities %}
+                  <option value="{{ city.id }}">{{ city.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wide">Date</label>
+            <div class="relative">
+              <i class="fa-solid fa-calendar-days absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm pointer-events-none"></i>
+              <input type="date" name="travel_date" required id="travel-date"
+                class="w-full pl-9 pr-3 py-3 rounded-xl border-2 border-slate-200 dark:border-slate-600 focus:border-blue-500 focus:outline-none bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-sm font-medium transition-all"/>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wide">Passengers</label>
+            <div class="relative">
+              <i class="fa-solid fa-users absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm pointer-events-none"></i>
+              <input type="number" name="passengers" value="1" min="1" max="10"
+                class="w-full pl-9 pr-3 py-3 rounded-xl border-2 border-slate-200 dark:border-slate-600 focus:border-blue-500 focus:outline-none bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-sm font-medium transition-all"/>
+            </div>
+          </div>
+
+        </div>
+
+        <button type="submit"
+          class="w-full sm:w-auto bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 active:from-orange-700 active:to-orange-800 text-white font-bold px-8 py-3.5 rounded-xl sm:rounded-2xl shadow-lg shadow-orange-200 dark:shadow-orange-900/30 transition-all flex items-center justify-center gap-2.5 text-sm min-h-[48px]">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          Search Available Buses
+        </button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     STATS BAR
+════════════════════════════════════════════ -->
+<section class="bg-white dark:bg-slate-800 border-y border-slate-100 dark:border-slate-700">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-0 sm:divide-x sm:divide-slate-100 sm:dark:divide-slate-700">
+
+      <div class="text-center px-2 sm:px-6 py-3 sm:py-2 bg-blue-50/50 dark:bg-blue-900/10 sm:bg-transparent rounded-xl sm:rounded-none">
+        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center mx-auto mb-2">
+          <i class="fa-solid fa-city text-blue-600 dark:text-blue-400 text-sm"></i>
+        </div>
+        <p class="text-xl sm:text-2xl font-black text-blue-700 dark:text-blue-400 tabular-nums">50+</p>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 font-medium">Cities Covered</p>
+      </div>
+
+      <div class="text-center px-2 sm:px-6 py-3 sm:py-2 bg-orange-50/50 dark:bg-orange-900/10 sm:bg-transparent rounded-xl sm:rounded-none">
+        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-orange-50 dark:bg-orange-900/20 flex items-center justify-center mx-auto mb-2">
+          <i class="fa-solid fa-bus text-orange-500 dark:text-orange-400 text-sm"></i>
+        </div>
+        <p class="text-xl sm:text-2xl font-black text-blue-700 dark:text-blue-400 tabular-nums">200+</p>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 font-medium">Daily Trips</p>
+      </div>
+
+      <div class="text-center px-2 sm:px-6 py-3 sm:py-2 bg-emerald-50/50 dark:bg-emerald-900/10 sm:bg-transparent rounded-xl sm:rounded-none">
+        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-emerald-50 dark:bg-emerald-900/20 flex items-center justify-center mx-auto mb-2">
+          <i class="fa-solid fa-face-smile text-emerald-600 dark:text-emerald-400 text-sm"></i>
+        </div>
+        <p class="text-xl sm:text-2xl font-black text-blue-700 dark:text-blue-400 tabular-nums">10K+</p>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 font-medium">Happy Passengers</p>
+      </div>
+
+      <div class="text-center px-2 sm:px-6 py-3 sm:py-2 bg-purple-50/50 dark:bg-purple-900/10 sm:bg-transparent rounded-xl sm:rounded-none">
+        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-purple-50 dark:bg-purple-900/20 flex items-center justify-center mx-auto mb-2">
+          <i class="fa-solid fa-handshake text-purple-600 dark:text-purple-400 text-sm"></i>
+        </div>
+        <p class="text-xl sm:text-2xl font-black text-blue-700 dark:text-blue-400 tabular-nums">30+</p>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 font-medium">Partner Agencies</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     FEATURED TRIPS
+════════════════════════════════════════════ -->
+{% if featured_trips %}
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+  <div class="flex items-end justify-between mb-5 sm:mb-7">
+    <div>
+      <p class="text-xs font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-widest mb-1 flex items-center gap-1.5">
+        <i class="fa-solid fa-bolt"></i> Departing Soon
+      </p>
+      <h2 class="text-xl sm:text-2xl font-extrabold text-slate-800 dark:text-white">Upcoming Trips</h2>
+    </div>
+    <a href="{% url 'search_trips' %}" class="text-sm font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors flex items-center gap-1.5">
+      View all <i class="fa-solid fa-arrow-right text-xs"></i>
+    </a>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+    {% for trip in featured_trips %}
+    <a href="{% url 'trip_detail' trip.id %}" class="group block bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm hover:shadow-lg hover:-translate-y-0.5 sm:hover:-translate-y-1 transition-all duration-200 overflow-hidden">
+      <div class="h-1.5 w-full bg-gradient-to-r from-blue-500 to-blue-700"></div>
+      <div class="p-4 sm:p-5">
+        <div class="flex items-center justify-between mb-3 sm:mb-4">
+          <div class="flex items-center gap-2 min-w-0">
+            <div class="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center font-bold text-blue-700 dark:text-blue-300 text-xs flex-shrink-0">
+              {{ trip.agency.name|slice:":2"|upper }}
+            </div>
+            <span class="text-xs font-medium text-slate-500 dark:text-slate-400 truncate">{{ trip.agency.name }}</span>
+          </div>
+          <span class="text-xs font-semibold bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-2.5 py-1 rounded-full flex-shrink-0 ml-2">{{ trip.bus.bus_type }}</span>
+        </div>
+
+        <div class="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+          <div class="text-center">
+            <p class="text-lg sm:text-xl font-extrabold text-slate-800 dark:text-white tabular-nums">{{ trip.departure_datetime|date:"H:i" }}</p>
+            <p class="text-xs font-semibold text-slate-600 dark:text-slate-400 mt-0.5 truncate max-w-[70px]">{{ trip.route.origin.name }}</p>
+          </div>
+          <div class="flex-1 flex flex-col items-center gap-0.5 min-w-0">
+            <p class="text-[10px] text-slate-400 font-medium">{{ trip.route.duration_display }}</p>
+            <div class="w-full flex items-center gap-1">
+              <div class="flex-1 h-px bg-slate-200 dark:bg-slate-600"></div>
+              <i class="fa-solid fa-bus text-blue-400 text-[10px] flex-shrink-0"></i>
+              <div class="flex-1 h-px bg-slate-200 dark:bg-slate-600"></div>
+            </div>
+          </div>
+          <div class="text-center">
+            <p class="text-lg sm:text-xl font-extrabold text-slate-800 dark:text-white tabular-nums">{{ trip.arrival_datetime|date:"H:i" }}</p>
+            <p class="text-xs font-semibold text-slate-600 dark:text-slate-400 mt-0.5 truncate max-w-[70px]">{{ trip.route.destination.name }}</p>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between pt-3 sm:pt-4 border-t border-slate-100 dark:border-slate-700">
+          <div>
+            <p class="text-xs text-slate-400 font-medium flex items-center gap-1">
+              <i class="fa-regular fa-calendar"></i>
+              {{ trip.departure_datetime|date:"d M Y" }}
+            </p>
+            <p class="text-xs font-semibold mt-0.5 {% if trip.available_seats_count < 5 %}text-red-500{% else %}text-emerald-600 dark:text-emerald-400{% endif %}">
+              <i class="fa-solid fa-chair text-[10px]"></i>
+              {{ trip.available_seats_count }} seats left
+            </p>
+          </div>
+          <div class="text-right">
+            <p class="text-lg sm:text-xl font-black text-blue-700 dark:text-blue-400 tabular-nums">PKR {{ trip.base_price|floatformat:0 }}</p>
+            <p class="text-xs text-orange-500 font-semibold group-hover:underline mt-0.5">
+              Select Seats <i class="fa-solid fa-arrow-right text-[10px]"></i>
+            </p>
+          </div>
+        </div>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<!-- ═══════════════════════════════════════════
+     HOW IT WORKS
+════════════════════════════════════════════ -->
+<section class="bg-slate-50 dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 py-12 sm:py-16">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-8 sm:mb-12">
+      <p class="text-xs font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-widest mb-2 flex items-center justify-center gap-1.5">
+        <i class="fa-solid fa-list-check"></i> Simple Process
+      </p>
+      <h2 class="text-xl sm:text-2xl font-extrabold text-slate-800 dark:text-white">Book in 4 Easy Steps</h2>
+    </div>
+
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+
+      <!-- Step 1 -->
+      <div class="relative">
+        <div class="hidden lg:block absolute top-7 left-[calc(50%+2rem)] right-0 h-px border-t-2 border-dashed border-slate-300 dark:border-slate-600 z-0"></div>
+        <div class="relative bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-6 border border-slate-100 dark:border-slate-700 shadow-sm text-center z-10 hover:shadow-md transition-shadow h-full">
+          <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-700 text-white flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-lg shadow-blue-200 dark:shadow-blue-900/40">
+            <i class="fa-solid fa-magnifying-glass text-lg sm:text-xl"></i>
+          </div>
+          <div class="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest mb-1">Step 1</div>
+          <h3 class="font-bold text-slate-800 dark:text-white mb-1 text-sm sm:text-base">Search</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed hidden sm:block">Enter origin, destination and travel date</p>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="relative">
+        <div class="hidden lg:block absolute top-7 left-[calc(50%+2rem)] right-0 h-px border-t-2 border-dashed border-slate-300 dark:border-slate-600 z-0"></div>
+        <div class="relative bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-6 border border-slate-100 dark:border-slate-700 shadow-sm text-center z-10 hover:shadow-md transition-shadow h-full">
+          <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-orange-500 to-orange-700 text-white flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-lg shadow-orange-200 dark:shadow-orange-900/40">
+            <i class="fa-solid fa-bus text-lg sm:text-xl"></i>
+          </div>
+          <div class="text-[10px] font-bold text-orange-600 dark:text-orange-400 uppercase tracking-widest mb-1">Step 2</div>
+          <h3 class="font-bold text-slate-800 dark:text-white mb-1 text-sm sm:text-base">Pick a Bus</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed hidden sm:block">Compare buses by price, time and amenities</p>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="relative">
+        <div class="hidden lg:block absolute top-7 left-[calc(50%+2rem)] right-0 h-px border-t-2 border-dashed border-slate-300 dark:border-slate-600 z-0"></div>
+        <div class="relative bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-6 border border-slate-100 dark:border-slate-700 shadow-sm text-center z-10 hover:shadow-md transition-shadow h-full">
+          <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-700 text-white flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-lg shadow-emerald-200 dark:shadow-emerald-900/40">
+            <i class="fa-solid fa-chair text-lg sm:text-xl"></i>
+          </div>
+          <div class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest mb-1">Step 3</div>
+          <h3 class="font-bold text-slate-800 dark:text-white mb-1 text-sm sm:text-base">Select Seat</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed hidden sm:block">Choose your preferred seat from live seat map</p>
+        </div>
+      </div>
+
+      <!-- Step 4 -->
+      <div class="relative">
+        <div class="relative bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-6 border border-slate-100 dark:border-slate-700 shadow-sm text-center z-10 hover:shadow-md transition-shadow h-full">
+          <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-purple-500 to-purple-700 text-white flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-lg shadow-purple-200 dark:shadow-purple-900/40">
+            <i class="fa-solid fa-qrcode text-lg sm:text-xl"></i>
+          </div>
+          <div class="text-[10px] font-bold text-purple-600 dark:text-purple-400 uppercase tracking-widest mb-1">Step 4</div>
+          <h3 class="font-bold text-slate-800 dark:text-white mb-1 text-sm sm:text-base">Get QR Ticket</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed hidden sm:block">Pay &amp; instantly receive your QR-coded ticket</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     CTA
+════════════════════════════════════════════ -->
+{% if not user.is_authenticated %}
+<section class="bg-gradient-to-r from-blue-700 to-blue-900 text-white py-12 sm:py-16">
+  <div class="max-w-3xl mx-auto px-4 text-center">
+    <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl sm:rounded-3xl bg-white/10 flex items-center justify-center mx-auto mb-4 sm:mb-5">
+      <i class="fa-solid fa-rocket text-xl sm:text-2xl text-white"></i>
+    </div>
+    <h2 class="text-2xl sm:text-3xl font-extrabold mb-2 sm:mb-3">Ready to travel?</h2>
+    <p class="text-blue-200 mb-6 sm:mb-7 text-base sm:text-lg">Create a free account and book your first trip in minutes.</p>
+    <div class="flex flex-col sm:flex-row gap-3 justify-center">
+      <a href="{% url 'register' %}" class="inline-flex items-center justify-center gap-2 bg-white text-blue-700 font-bold px-6 sm:px-7 py-3.5 rounded-2xl hover:bg-blue-50 transition-colors shadow-lg min-h-[48px]">
+        <i class="fa-solid fa-user-plus"></i> Create Free Account
+      </a>
+      <a href="{% url 'agency:register' %}" class="inline-flex items-center justify-center gap-2 bg-blue-600/50 border border-blue-400/40 text-white font-semibold px-6 sm:px-7 py-3.5 rounded-2xl hover:bg-blue-600/70 transition-colors min-h-[48px]">
+        <i class="fa-solid fa-building"></i> Register Agency
+      </a>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<script>
+  document.getElementById('travel-date').min = new Date().toISOString().split('T')[0];
+
+  (function () {
+    const track  = document.getElementById('slider-track');
+    const dots   = document.querySelectorAll('#slider-dots .slider-dot');
+    const prev   = document.getElementById('slider-prev');
+    const next   = document.getElementById('slider-next');
+    const total  = dots.length;
+    let current  = 0;
+    let timer;
+
+    function goTo(idx) {
+      current = (idx + total) % total;
+      track.style.transform = `translateX(-${current * 100}%)`;
+      dots.forEach((d, i) => d.classList.toggle('active', i === current));
+    }
+
+    function autoPlay() { timer = setInterval(() => goTo(current + 1), 5000); }
+    function resetTimer() { clearInterval(timer); autoPlay(); }
+
+    prev.addEventListener('click', () => { goTo(current - 1); resetTimer(); });
+    next.addEventListener('click', () => { goTo(current + 1); resetTimer(); });
+    dots.forEach(d => d.addEventListener('click', () => { goTo(+d.dataset.slide); resetTimer(); }));
+
+    const slider = document.getElementById('hero-slider');
+    slider.addEventListener('mouseenter', () => clearInterval(timer));
+    slider.addEventListener('mouseleave', autoPlay);
+
+    let startX = 0;
+    slider.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
+    slider.addEventListener('touchend', e => {
+      const diff = startX - e.changedTouches[0].clientX;
+      if (Math.abs(diff) > 40) { goTo(diff > 0 ? current + 1 : current - 1); resetTimer(); }
+    });
+
+    autoPlay();
+  })();
+</script>
+
+{% endblock %}
