@@ -1,11 +1,54 @@
 {% extends 'agency/base_agency.html' %}
-{% block title %}Drivers — TMS{% endblock %}
-{% block page_title %}Drivers{% endblock %}
-{% block page_subtitle %}Manage your driving team{% endblock %}
+{% block title %}Drivers & Trip Details — TMS{% endblock %}
+{% block page_title %}Drivers & Trip Assignment{% endblock %}
+{% block page_subtitle %}Manage your driving team and monitor trips taken by each driver{% endblock %}
 
 {% block content %}
+<!-- Drivers Overview Stats Bar -->
+<div class="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-6 fade-up">
+  <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-100 shadow-sm relative overflow-hidden">
+    <div class="absolute top-0 left-0 w-1 h-full bg-blue-500 rounded-l-2xl"></div>
+    <div class="flex items-center justify-between mb-2">
+      <span class="text-xs font-semibold text-slate-400 uppercase tracking-wide">Total Drivers</span>
+      <div class="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+      </div>
+    </div>
+    <p class="text-xl sm:text-2xl font-black text-slate-800 tabular-nums">{{ total_fleet_drivers|default:drivers|length }}</p>
+    <p class="text-xs text-blue-600 mt-1 font-semibold">{{ active_drivers_count|default:0 }} currently active</p>
+  </div>
+
+  <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-100 shadow-sm relative overflow-hidden">
+    <div class="absolute top-0 left-0 w-1 h-full bg-violet-500 rounded-l-2xl"></div>
+    <div class="flex items-center justify-between mb-2">
+      <span class="text-xs font-semibold text-slate-400 uppercase tracking-wide">Total Trips Taken</span>
+      <div class="w-8 h-8 rounded-xl bg-violet-50 text-violet-600 flex items-center justify-center">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4"/></svg>
+      </div>
+    </div>
+    <p class="text-xl sm:text-2xl font-black text-slate-800 tabular-nums">{{ total_assigned_trips|default:0 }}</p>
+    <p class="text-xs text-slate-400 mt-1 font-medium">Assigned across team</p>
+  </div>
+
+  <div class="col-span-2 lg:col-span-1 bg-white rounded-2xl p-4 sm:p-5 border border-slate-100 shadow-sm relative overflow-hidden">
+    <div class="absolute top-0 left-0 w-1 h-full bg-emerald-500 rounded-l-2xl"></div>
+    <div class="flex items-center justify-between mb-2">
+      <span class="text-xs font-semibold text-slate-400 uppercase tracking-wide">Active Status</span>
+      <div class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      </div>
+    </div>
+    <p class="text-xl sm:text-2xl font-black text-emerald-600 tabular-nums">Ready for Trips</p>
+    <p class="text-xs text-slate-400 mt-1 font-medium">Available for scheduling</p>
+  </div>
+</div>
+
+<!-- Header & Add Driver Button -->
 <div class="flex items-center justify-between mb-5 fade-up">
-  <p class="text-slate-400 text-sm font-medium"><span class="font-bold text-slate-700">{{ drivers|length }}</span> driver{{ drivers|length|pluralize }} registered</p>
+  <div>
+    <h2 class="text-base font-bold text-slate-800">Driving Team & Trip Counts</h2>
+    <p class="text-xs text-slate-400 mt-0.5">View individual workload and assigned routes</p>
+  </div>
   <a href="{% url 'agency:driver_add' %}"
     class="inline-flex items-center gap-1.5 bg-blue-700 hover:bg-blue-800 text-white px-4 py-2.5 rounded-xl text-sm font-bold transition-colors shadow-sm shadow-blue-200">
     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
@@ -13,70 +56,98 @@
   </a>
 </div>
 
-<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+<!-- Driver Cards Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 mb-8">
   {% for driver in drivers %}
-  <div class="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden fade-up">
+  <div class="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden fade-up flex flex-col justify-between">
     <!-- Top section -->
     <div class="p-5">
-      <div class="flex items-center gap-4 mb-4">
+      <div class="flex items-start gap-4 mb-4">
         {% if driver.photo %}
-        <img src="{{ driver.photo.url }}" class="w-14 h-14 rounded-2xl object-cover border-2 border-slate-100 shrink-0"/>
+        <img src="{{ driver.photo.url }}" alt="{{ driver.full_name }}" class="w-14 h-14 rounded-2xl object-cover border-2 border-slate-100 shrink-0 shadow-sm"/>
         {% else %}
         <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center font-extrabold text-white text-xl shrink-0 shadow-sm shadow-blue-200">
           {{ driver.full_name|slice:":1"|upper }}
         </div>
         {% endif %}
         <div class="flex-1 min-w-0">
-          <p class="font-extrabold text-slate-800 truncate">{{ driver.full_name }}</p>
-          <p class="text-xs text-slate-400 mt-0.5">{{ driver.phone_number }}</p>
-          <div class="mt-1">
-            <span class="badge {% if driver.status == 'active' %}badge-green{% elif driver.status == 'on_leave' %}badge-yellow{% else %}badge-red{% endif %}">
+          <div class="flex items-center justify-between gap-1">
+            <p class="font-extrabold text-slate-800 text-base truncate">{{ driver.full_name }}</p>
+            <span class="badge {% if driver.status == 'active' %}badge-green{% elif driver.status == 'on_leave' %}badge-yellow{% else %}badge-red{% endif %} shrink-0">
               {{ driver.get_status_display }}
             </span>
+          </div>
+          <p class="text-xs text-slate-400 mt-0.5">{{ driver.phone_number }}</p>
+        </div>
+      </div>
+
+      <!-- Trips Taken Performance Highlight Box -->
+      <div class="bg-gradient-to-br from-blue-50/80 to-indigo-50/40 border border-blue-100/80 rounded-xl p-3.5 mb-4">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-[11px] font-bold text-blue-800 uppercase tracking-wide flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4"/></svg>
+            Trips Taken
+          </span>
+          <span class="text-xs font-black bg-blue-600 text-white px-2.5 py-0.5 rounded-full tabular-nums shadow-sm shadow-blue-200">
+            {{ driver.trips_count|default:driver.total_trips_count }} trip{{ driver.trips_count|default:driver.total_trips_count|pluralize }}
+          </span>
+        </div>
+
+        <!-- Trip Status Breakdown -->
+        <div class="grid grid-cols-2 gap-2 text-xs pt-2 border-t border-blue-100/70">
+          <div>
+            <span class="text-slate-400 text-[10px] block font-medium">Scheduled</span>
+            <span class="font-bold text-slate-800">{{ driver.upcoming_trips_count }} upcoming</span>
+          </div>
+          <div>
+            <span class="text-slate-400 text-[10px] block font-medium">Completed</span>
+            <span class="font-bold text-emerald-700">{{ driver.completed_trips_count }} arrived</span>
           </div>
         </div>
       </div>
 
-      <!-- Details -->
-      <div class="space-y-2 text-sm">
-        <div class="flex items-center justify-between py-1.5 border-b border-slate-50">
+      <!-- Driver Details -->
+      <div class="space-y-2 text-sm bg-slate-50/60 rounded-xl p-3 border border-slate-100">
+        <div class="flex items-center justify-between text-xs py-0.5">
           <span class="text-slate-400 font-medium flex items-center gap-1.5">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"/></svg>
-            License
+            License No.
           </span>
-          <span class="font-mono font-bold text-slate-700 text-xs">{{ driver.license_number }}</span>
+          <span class="font-mono font-bold text-slate-700">{{ driver.license_number }}</span>
         </div>
-        <div class="flex items-center justify-between py-1.5 border-b border-slate-50">
+        <div class="flex items-center justify-between text-xs py-0.5">
           <span class="text-slate-400 font-medium flex items-center gap-1.5">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-            Expires
+            License Expiry
           </span>
-          <span class="font-semibold text-slate-700 text-xs">{{ driver.license_expiry_date|date:"d M Y" }}</span>
+          <span class="font-semibold text-slate-700">{{ driver.license_expiry_date|date:"d M Y" }}</span>
         </div>
-        <div class="flex items-center justify-between py-1.5">
+        <div class="flex items-center justify-between text-xs py-0.5">
           <span class="text-slate-400 font-medium flex items-center gap-1.5">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
-            Experience
+            Driving Experience
           </span>
-          <span class="font-semibold text-slate-700 text-xs">{{ driver.experience_years }} year{{ driver.experience_years|pluralize }}</span>
+          <span class="font-semibold text-slate-700">{{ driver.experience_years }} year{{ driver.experience_years|pluralize }}</span>
         </div>
       </div>
     </div>
 
     <!-- Actions -->
-    <div class="flex gap-2 px-5 pb-4">
-      <a href="{% url 'agency:driver_edit' driver.id %}"
-        class="flex-1 text-center text-xs font-bold text-blue-700 border border-blue-200 hover:bg-blue-50 hover:border-blue-300 py-2 rounded-xl transition-all">
-        Edit
-      </a>
-      <form action="{% url 'agency:driver_delete' driver.id %}" method="POST"
-        onsubmit="return confirm('Delete {{ driver.full_name }}?')" class="flex-1">
-        {% csrf_token %}
-        <button type="submit"
-          class="w-full text-xs font-bold text-red-500 border border-red-200 hover:bg-red-50 hover:border-red-300 py-2 rounded-xl transition-all">
-          Delete
-        </button>
-      </form>
+    <div class="px-5 pb-5">
+      <div class="flex gap-2 pt-3 border-t border-slate-50">
+        <a href="{% url 'agency:driver_edit' driver.id %}"
+          class="flex-1 text-center text-xs font-bold text-blue-700 border border-blue-200 hover:bg-blue-50 hover:border-blue-300 py-2 rounded-xl transition-all">
+          Edit
+        </a>
+        <form action="{% url 'agency:driver_delete' driver.id %}" method="POST"
+          onsubmit="return confirm('Delete {{ driver.full_name }}?')" class="flex-1">
+          {% csrf_token %}
+          <button type="submit"
+            class="w-full text-xs font-bold text-red-500 border border-red-200 hover:bg-red-50 hover:border-red-300 py-2 rounded-xl transition-all">
+            Delete
+          </button>
+        </form>
+      </div>
     </div>
   </div>
   {% empty %}
@@ -87,7 +158,7 @@
       </svg>
     </div>
     <h3 class="text-lg font-bold text-slate-600 mb-1">No drivers added yet</h3>
-    <p class="text-slate-400 text-sm mb-5">Add drivers to assign them to scheduled trips.</p>
+    <p class="text-slate-400 text-sm mb-5">Add drivers to assign them to scheduled trips and track their routes.</p>
     <a href="{% url 'agency:driver_add' %}"
       class="inline-flex items-center gap-1.5 bg-blue-700 hover:bg-blue-800 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-colors">
       Add Your First Driver →
@@ -95,4 +166,88 @@
   </div>
   {% endfor %}
 </div>
+
+<!-- Detailed Driver Trips Breakdown Table -->
+{% if drivers %}
+<div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden fade-up">
+  <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <div class="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center">
+        <svg class="w-3.5 h-3.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4"/></svg>
+      </div>
+      <div>
+        <h3 class="font-bold text-slate-800 text-sm">Driver Trips & Assignment Overview</h3>
+        <p class="text-xs text-slate-400">Total trips taken and operational status per driver</p>
+      </div>
+    </div>
+    <span class="text-xs font-semibold text-slate-400">Total Assigned: {{ total_assigned_trips|default:0 }} trips</span>
+  </div>
+
+  <div class="overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="border-b border-slate-100 bg-slate-50/70">
+          <th class="text-left px-5 py-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wide">Driver</th>
+          <th class="text-left px-5 py-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wide hidden sm:table-cell">License & Expiry</th>
+          <th class="text-left px-5 py-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wide hidden md:table-cell">Experience</th>
+          <th class="text-left px-5 py-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wide">Status</th>
+          <th class="text-center px-5 py-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wide">Total Trips Taken</th>
+          <th class="text-center px-5 py-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wide hidden sm:table-cell">Upcoming</th>
+          <th class="text-center px-5 py-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wide hidden sm:table-cell">Completed</th>
+          <th class="px-5 py-3.5"></th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-50">
+        {% for driver in drivers %}
+        <tr class="hover:bg-slate-50/70 transition-colors">
+          <td class="px-5 py-4">
+            <div class="flex items-center gap-3">
+              {% if driver.photo %}
+              <img src="{{ driver.photo.url }}" alt="{{ driver.full_name }}" class="w-9 h-9 rounded-xl object-cover shrink-0"/>
+              {% else %}
+              <div class="w-9 h-9 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center font-bold text-xs shrink-0">
+                {{ driver.full_name|slice:":1"|upper }}
+              </div>
+              {% endif %}
+              <div>
+                <p class="font-bold text-slate-800">{{ driver.full_name }}</p>
+                <p class="text-xs text-slate-400">{{ driver.phone_number }}</p>
+              </div>
+            </div>
+          </td>
+          <td class="px-5 py-4 text-xs text-slate-600 hidden sm:table-cell">
+            <span class="font-mono font-bold text-slate-700">{{ driver.license_number }}</span>
+            <p class="text-slate-400 text-[11px] mt-0.5">Exp: {{ driver.license_expiry_date|date:"d M Y" }}</p>
+          </td>
+          <td class="px-5 py-4 text-xs font-medium text-slate-700 hidden md:table-cell">
+            {{ driver.experience_years }} year{{ driver.experience_years|pluralize }}
+          </td>
+          <td class="px-5 py-4">
+            <span class="badge {% if driver.status == 'active' %}badge-green{% elif driver.status == 'on_leave' %}badge-yellow{% else %}badge-red{% endif %}">
+              {{ driver.get_status_display }}
+            </span>
+          </td>
+          <td class="px-5 py-4 text-center">
+            <span class="inline-flex items-center gap-1 font-black text-blue-700 bg-blue-50 px-3 py-1 rounded-full text-xs tabular-nums">
+              {{ driver.trips_count|default:driver.total_trips_count }} trip{{ driver.trips_count|default:driver.total_trips_count|pluralize }}
+            </span>
+          </td>
+          <td class="px-5 py-4 text-center font-semibold text-slate-600 hidden sm:table-cell tabular-nums">
+            {{ driver.upcoming_trips_count }}
+          </td>
+          <td class="px-5 py-4 text-center font-semibold text-emerald-600 hidden sm:table-cell tabular-nums">
+            {{ driver.completed_trips_count }}
+          </td>
+          <td class="px-5 py-4 text-right">
+            <a href="{% url 'agency:driver_edit' driver.id %}" class="text-xs font-bold text-blue-600 hover:text-blue-800">
+              Edit →
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
 {% endblock %}

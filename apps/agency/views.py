@@ -61,6 +61,18 @@ def agency_dashboard(request):
     total_revenue = Booking.objects.filter(
         trip__agency=agency, status='confirmed'
     ).aggregate(total=Sum('total_price'))['total'] or 0
+
+    from django.db.models import Q
+    bus_revenues = agency.buses.annotate(
+        revenue=Sum('trips__bookings__total_price', filter=Q(trips__bookings__status='confirmed')),
+        trips_count=Count('trips', distinct=True),
+        bookings_count=Count('trips__bookings', filter=Q(trips__bookings__status='confirmed'), distinct=True),
+    ).order_by('-revenue', 'registration_number')
+
+    for b in bus_revenues:
+        b.revenue_amount = b.revenue or 0
+        b.revenue_share = round((b.revenue_amount / total_revenue * 100), 1) if total_revenue > 0 else 0
+
     upcoming_trips = trips.filter(
         departure_datetime__gte=timezone.now(),
         status='scheduled'
@@ -77,6 +89,7 @@ def agency_dashboard(request):
         'today_bookings': today_bookings,
         'total_bookings': total_bookings,
         'total_revenue': total_revenue,
+        'bus_revenues': bus_revenues,
         'upcoming_trips': upcoming_trips,
         'recent_bookings': recent_bookings,
     })
@@ -88,7 +101,18 @@ def agency_dashboard(request):
 def driver_list(request):
     agency = request.user.agency
     drivers = agency.drivers.all()
-    return render(request, 'agency/drivers/list.html', {'drivers': drivers, 'agency': agency})
+
+    total_fleet_drivers = drivers.count()
+    active_drivers_count = drivers.filter(status='active').count()
+    total_assigned_trips = sum(d.total_trips_count for d in drivers)
+
+    return render(request, 'agency/drivers/list.html', {
+        'drivers': drivers,
+        'agency': agency,
+        'total_fleet_drivers': total_fleet_drivers,
+        'active_drivers_count': active_drivers_count,
+        'total_assigned_trips': total_assigned_trips,
+    })
 
 
 @agency_required
@@ -138,8 +162,30 @@ def driver_delete(request, pk):
 @agency_required
 def bus_list(request):
     agency = request.user.agency
-    buses = agency.buses.all()
-    return render(request, 'agency/buses/list.html', {'buses': buses, 'agency': agency})
+    from apps.bookings.models import Booking
+    from django.db.models import Sum, Count, Q
+
+    buses = agency.buses.annotate(
+        revenue=Sum('trips__bookings__total_price', filter=Q(trips__bookings__status='confirmed')),
+        trips_count=Count('trips', distinct=True),
+        bookings_count=Count('trips__bookings', filter=Q(trips__bookings__status='confirmed'), distinct=True),
+    ).order_by('-revenue', '-created_at')
+
+    total_fleet_revenue = sum((b.revenue or 0) for b in buses)
+    total_fleet_bookings = sum((b.bookings_count or 0) for b in buses)
+    total_fleet_trips = sum((b.trips_count or 0) for b in buses)
+
+    for b in buses:
+        b.revenue_amount = b.revenue or 0
+        b.revenue_share = round((b.revenue_amount / total_fleet_revenue * 100), 1) if total_fleet_revenue > 0 else 0
+
+    return render(request, 'agency/buses/list.html', {
+        'buses': buses,
+        'agency': agency,
+        'total_fleet_revenue': total_fleet_revenue,
+        'total_fleet_bookings': total_fleet_bookings,
+        'total_fleet_trips': total_fleet_trips,
+    })
 
 
 @agency_required
@@ -187,8 +233,35 @@ def bus_delete(request, pk):
 @agency_required
 def agency_bookings(request):
     from apps.bookings.models import Booking
+    from django.db.models import Sum
     agency = request.user.agency
     bookings = Booking.objects.filter(
         trip__agency=agency
-    ).select_related('passenger', 'trip__route__origin', 'trip__route__destination').order_by('-booked_at')
-    return render(request, 'agency/bookings/list.html', {'bookings': bookings, 'agency': agency})
+    ).select_related(
+        'passenger',
+        'trip__route__origin',
+        'trip__route__destination',
+        'trip__bus'
+    ).order_by('-booked_at')
+
+    # Calculate passenger travel history with this agency
+    for b in bookings:
+        b.passenger_agency_trips = Booking.objects.filter(
+            trip__agency=agency,
+            passenger=b.passenger,
+            status='confirmed'
+        ).count()
+
+    total_bookings_count = bookings.count()
+    confirmed_bookings_count = bookings.filter(status='confirmed').count()
+    pending_bookings_count = bookings.filter(status='pending').count()
+    total_agency_revenue = bookings.filter(status='confirmed').aggregate(t=Sum('total_price'))['t'] or 0
+
+    return render(request, 'agency/bookings/list.html', {
+        'bookings': bookings,
+        'agency': agency,
+        'total_bookings_count': total_bookings_count,
+        'confirmed_bookings_count': confirmed_bookings_count,
+        'pending_bookings_count': pending_bookings_count,
+        'total_agency_revenue': total_agency_revenue,
+    })

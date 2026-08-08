@@ -74,6 +74,18 @@ class Driver(models.Model):
         colors = {'active': 'green', 'on_leave': 'yellow', 'terminated': 'red'}
         return colors.get(self.status, 'gray')
 
+    @property
+    def total_trips_count(self):
+        return self.trips.count()
+
+    @property
+    def completed_trips_count(self):
+        return self.trips.filter(status='arrived').count()
+
+    @property
+    def upcoming_trips_count(self):
+        return self.trips.filter(status='scheduled').count()
+
 
 class Bus(models.Model):
     BUS_TYPE_CHOICES = [
@@ -125,3 +137,18 @@ class Bus(models.Model):
             if self.amenities.get(key):
                 result.append({'label': label, 'path': path})
         return result
+
+    @property
+    def total_revenue(self):
+        from apps.bookings.models import Booking
+        from django.db.models import Sum
+        return Booking.objects.filter(trip__bus=self, status='confirmed').aggregate(t=Sum('total_price'))['t'] or 0
+
+    @property
+    def total_trips_count(self):
+        return self.trips.count()
+
+    @property
+    def total_bookings_count(self):
+        from apps.bookings.models import Booking
+        return Booking.objects.filter(trip__bus=self, status='confirmed').count()

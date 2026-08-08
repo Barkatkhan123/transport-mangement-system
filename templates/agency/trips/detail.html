@@ -48,6 +48,7 @@
     <div class="bg-slate-50 rounded-xl p-3.5">
       <p class="text-xs text-slate-400 font-medium mb-1">Driver</p>
       <p class="font-bold text-slate-800 text-sm">{{ trip.driver.full_name }}</p>
+      <p class="text-xs text-slate-400">{{ trip.driver.total_trips_count }} trip{{ trip.driver.total_trips_count|pluralize }} assigned</p>
     </div>
     <div class="bg-slate-50 rounded-xl p-3.5">
       <p class="text-xs text-slate-400 font-medium mb-1">Ticket Price</p>

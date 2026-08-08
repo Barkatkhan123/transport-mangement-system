@@ -61,6 +61,52 @@ class User(AbstractBaseUser, PermissionsMixin):
             return f"{parts[0][0]}{parts[1][0]}".upper()
         return self.full_name[0].upper() if self.full_name else 'U'
 
+    @property
+    def total_travels_count(self):
+        return self.bookings.filter(status='confirmed').count()
+
+    @property
+    def total_spent(self):
+        from django.db.models import Sum
+        return self.bookings.filter(status='confirmed').aggregate(t=Sum('total_price'))['t'] or 0
+
+    def get_travel_history_breakdown(self):
+        confirmed_bookings = self.bookings.filter(status='confirmed').select_related(
+            'trip__agency', 'trip__route__origin', 'trip__route__destination'
+        )
+        grouped = {}
+        for b in confirmed_bookings:
+            agency_name = b.trip.agency.name
+            origin_name = b.trip.route.origin.name
+            dest_name = b.trip.route.destination.name
+            key = (agency_name, origin_name, dest_name)
+            if key not in grouped:
+                grouped[key] = {
+                    'agency_name': agency_name,
+                    'origin': origin_name,
+                    'destination': dest_name,
+                    'trips_count': 0,
+                    'total_spent': 0,
+                    'last_traveled': b.booked_at,
+                }
+            grouped[key]['trips_count'] += 1
+            grouped[key]['total_spent'] += float(b.total_price)
+            if b.booked_at > grouped[key]['last_traveled']:
+                grouped[key]['last_traveled'] = b.booked_at
+
+        for record in grouped.values():
+            cnt = record['trips_count']
+            record['summary'] = f"{cnt} travel{'s' if cnt > 1 else ''} with {record['agency_name']} from {record['origin']} to {record['destination']}"
+
+        return list(grouped.values())
+
+    @property
+    def travel_records_summary(self):
+        records = self.get_travel_history_breakdown()
+        if not records:
+            return "No travel history yet"
+        return ", ".join(r['summary'] for r in records)
+
 
 class PassengerProfile(models.Model):
     GENDER_CHOICES = [('M', 'Male'), ('F', 'Female'), ('O', 'Other')]

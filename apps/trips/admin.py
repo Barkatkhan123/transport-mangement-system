@@ -10,8 +10,12 @@ class CityAdmin(admin.ModelAdmin):
 
 @admin.register(Route)
 class RouteAdmin(admin.ModelAdmin):
-    list_display = ('origin', 'destination', 'distance_km', 'estimated_duration_minutes')
+    list_display = ('origin', 'destination', 'distance_km', 'duration_display_admin')
     search_fields = ('origin__name', 'destination__name')
+
+    def duration_display_admin(self, obj):
+        return obj.duration_display
+    duration_display_admin.short_description = 'Duration'
 
 
 @admin.register(Trip)

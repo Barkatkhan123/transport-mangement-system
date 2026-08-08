@@ -29,10 +29,16 @@
             <div>
               <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Distance (km)</label>
               {{ form.distance_km }}
+              {% if form.distance_km.errors %}
+              <p class="text-xs text-red-500 mt-1 font-medium">{{ form.distance_km.errors.0 }}</p>
+              {% endif %}
             </div>
             <div>
-              <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Duration (minutes)</label>
-              {{ form.estimated_duration_minutes }}
+              <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Duration (hours)</label>
+              {{ form.estimated_duration_hours }}
+              {% if form.estimated_duration_hours.errors %}
+              <p class="text-xs text-red-500 mt-1 font-medium">{{ form.estimated_duration_hours.errors.0 }}</p>
+              {% endif %}
             </div>
           </div>
 

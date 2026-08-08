@@ -32,7 +32,20 @@ class Route(models.Model):
             return 'N/A'
         h = self.estimated_duration_minutes // 60
         m = self.estimated_duration_minutes % 60
-        return f"{h}h {m}m" if m else f"{h}h"
+        if h > 0 and m > 0:
+            return f"{h}h {m}m"
+        elif h > 0:
+            return f"{h}h"
+        elif m > 0:
+            return f"{m}m"
+        return '0m'
+
+    @property
+    def duration_hours(self):
+        if not self.estimated_duration_minutes:
+            return None
+        hours = self.estimated_duration_minutes / 60
+        return int(hours) if hours.is_integer() else round(hours, 2)
 
 
 class Trip(models.Model):
@@ -61,6 +74,23 @@ class Trip(models.Model):
 
     def __str__(self):
         return f"{self.route} | {self.departure_datetime.strftime('%d %b %Y %H:%M')}"
+
+    @property
+    def duration_display(self):
+        if self.departure_datetime and self.arrival_datetime:
+            diff = self.arrival_datetime - self.departure_datetime
+            total_seconds = int(diff.total_seconds())
+            if total_seconds > 0:
+                total_minutes = total_seconds // 60
+                h = total_minutes // 60
+                m = total_minutes % 60
+                if h > 0 and m > 0:
+                    return f"{h}h {m}m"
+                elif h > 0:
+                    return f"{h}h"
+                elif m > 0:
+                    return f"{m}m"
+        return self.route.duration_display if self.route else 'N/A'
 
     @property
     def available_seats_count(self):

@@ -105,12 +105,50 @@ class TripForm(forms.ModelForm):
 
 
 class RouteForm(forms.ModelForm):
+    estimated_duration_hours = forms.DecimalField(
+        required=False,
+        max_digits=5,
+        decimal_places=2,
+        min_value=0.1,
+        widget=forms.NumberInput(attrs={
+            'class': INPUT_CLASS,
+            'placeholder': 'Duration in hours (e.g. 18 or 2.5)',
+            'step': 'any',
+            'min': '0.1'
+        }),
+        label='Duration (hours)'
+    )
+
     class Meta:
         model = Route
-        fields = ['origin', 'destination', 'distance_km', 'estimated_duration_minutes']
+        fields = ['origin', 'destination', 'distance_km', 'estimated_duration_hours']
         widgets = {
             'origin': forms.Select(attrs={'class': SELECT_CLASS}),
             'destination': forms.Select(attrs={'class': SELECT_CLASS}),
-            'distance_km': forms.NumberInput(attrs={'class': INPUT_CLASS, 'placeholder': 'Distance in KM'}),
-            'estimated_duration_minutes': forms.NumberInput(attrs={'class': INPUT_CLASS, 'placeholder': 'Duration in minutes'}),
+            'distance_km': forms.NumberInput(attrs={'class': INPUT_CLASS, 'placeholder': 'Distance in KM', 'min': '1'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.pk and self.instance.estimated_duration_minutes:
+            hours = self.instance.estimated_duration_minutes / 60
+            self.fields['estimated_duration_hours'].initial = int(hours) if hours.is_integer() else round(hours, 2)
+
+    def clean(self):
+        cleaned = super().clean()
+        origin = cleaned.get('origin')
+        destination = cleaned.get('destination')
+        if origin and destination and origin == destination:
+            raise forms.ValidationError('Origin and destination cannot be the same city.')
+        return cleaned
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        hours = self.cleaned_data.get('estimated_duration_hours')
+        if hours is not None:
+            instance.estimated_duration_minutes = int(round(float(hours) * 60))
+        else:
+            instance.estimated_duration_minutes = None
+        if commit:
+            instance.save()
+        return instance

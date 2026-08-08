@@ -40,10 +40,19 @@ def admin_dashboard(request):
     ).order_by('-booked_at')[:10]
     pending_agencies = Agency.objects.filter(status='pending').select_related('manager').order_by('created_at')
 
+    from apps.agency.models import Bus
+    from django.db.models import Q
+    bus_revenues = Bus.objects.select_related('agency').annotate(
+        revenue=Sum('trips__bookings__total_price', filter=Q(trips__bookings__status='confirmed')),
+        trips_count=Count('trips', distinct=True),
+        bookings_count=Count('trips__bookings', filter=Q(trips__bookings__status='confirmed'), distinct=True),
+    ).order_by('-revenue', 'registration_number')[:10]
+
     return render(request, 'admin_panel/dashboard.html', {
         'stats': stats,
         'recent_bookings': recent_bookings,
         'pending_agencies': pending_agencies,
+        'bus_revenues': bus_revenues,
     })
 
 
@@ -75,5 +84,21 @@ def approve_agency(request, agency_id):
 @admin_required
 def admin_users(request):
     from apps.accounts.models import User
+    from apps.bookings.models import Booking
+
     users = User.objects.all().order_by('-date_joined')
-    return render(request, 'admin_panel/users.html', {'users': users})
+    for u in users:
+        u.travel_history = u.get_travel_history_breakdown()
+        u.confirmed_trips_count = u.total_travels_count
+        u.total_amount_spent = u.total_spent
+
+    total_passengers = users.filter(role='passenger').count()
+    total_agencies = users.filter(role='agency').count()
+    total_platform_bookings = Booking.objects.filter(status='confirmed').count()
+
+    return render(request, 'admin_panel/users.html', {
+        'users': users,
+        'total_passengers': total_passengers,
+        'total_agencies': total_agencies,
+        'total_platform_bookings': total_platform_bookings,
+    })

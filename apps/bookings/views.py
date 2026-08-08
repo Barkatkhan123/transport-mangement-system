@@ -123,8 +123,31 @@ def my_bookings(request):
         'trip__route__origin',
         'trip__route__destination',
         'trip__agency',
+        'trip__bus',
+        'trip__driver',
     ).prefetch_related('seats').order_by('-booked_at')
-    return render(request, 'passenger/my_bookings.html', {'bookings': bookings})
+
+    total_spent = request.user.total_spent
+    total_trips = bookings.filter(status='confirmed').count()
+    upcoming_count = bookings.filter(
+        status='confirmed',
+        trip__departure_datetime__gte=timezone.now()
+    ).count()
+    completed_count = bookings.filter(
+        status='confirmed',
+        trip__departure_datetime__lt=timezone.now()
+    ).count()
+
+    travel_breakdown = request.user.get_travel_history_breakdown()
+
+    return render(request, 'passenger/my_bookings.html', {
+        'bookings': bookings,
+        'total_spent': total_spent,
+        'total_trips': total_trips,
+        'upcoming_count': upcoming_count,
+        'completed_count': completed_count,
+        'travel_breakdown': travel_breakdown,
+    })
 
 
 @login_required
